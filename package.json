@@ -1,0 +1,52 @@
+{
+  "name": "klocknertpm",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js",
+    "server": "nodemon server.js",
+    "client": "npm start --prefix client",
+    "firststep": "cd client && npm install",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "heroku-postbuild": "cd client && npm install && npm run build"
+  },
+  "engines": {
+    "node": "12.16.1",
+    "npm": "6.14.4"
+  },
+  "dependencies": {
+    "@dabeng/react-orgchart": "^1.0.0",
+    "@material-ui/core": "^4.11.3",
+    "@material-ui/icons": "^4.11.2",
+    "availity-reactstrap-validation": "^2.7.0",
+    "bcryptjs": "^2.4.3",
+    "body-parse": "^0.1.0",
+    "cloudinary-react": "^1.6.8",
+    "concurrently": "^5.2.0",
+    "config": "^3.3.1",
+    "emailjs-com": "^3.2.0",
+    "express": "^4.17.1",
+    "express-fileupload": "^1.1.7-alpha.3",
+    "express-ipfilter": "^1.1.2",
+    "ip-whitelist": "^1.2.2",
+    "jsonwebtoken": "^8.5.1",
+    "material-table": "^1.69.2",
+    "mongoose": "^5.9.10",
+    "namor": "^2.0.2",
+    "react-horizontal-scroll-container": "^1.0.1",
+    "react-organizational-chart": "^2.1.0",
+    "react-print-components": "^1.0.4",
+    "react-select": "^3.1.0",
+    "react-table": "^7.6.3",
+    "react-virtualized": "^9.22.3",
+    "react-window": "^1.8.6",
+    "xlsx": "^0.16.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.3"
+  },
+  "author": "Federico Poi",
+  "license": "ISC"
+}

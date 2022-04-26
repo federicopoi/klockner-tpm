@@ -1,0 +1,182 @@
+thead button::after {
+  content: "⇵";
+}
+
+thead button.ascending::after {
+  content: "⥔";
+  display: inline-block;
+  margin-left: 0em;
+}
+
+thead button.descending::after {
+  content: "⥙";
+  display: inline-block;
+  margin-left: 0em;
+}
+.nav-link {
+  cursor: pointer;
+}
+#videoview {
+  position: relative;
+  width: 640px;
+  height: 480px;
+}
+
+#video {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+#overlay {
+  position: absolute;
+  top: 100;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+}
+.trapezoidVerde {
+  border-bottom: 50px solid #28a745;
+  border-left: 25px solid transparent;
+  border-right: 25px solid transparent;
+  height: 0;
+}
+.trapezoidRojo {
+  border-bottom: 50px solid #dc3545;
+  border-left: 25px solid transparent;
+  border-right: 25px solid transparent;
+  height: 0;
+}
+.trapezoidAzul {
+  border-bottom: 50px solid #007bff;
+  border-left: 25px solid transparent;
+  border-right: 25px solid transparent;
+  height: 0;
+}
+.trapezoidAmarilla {
+  border-bottom: 50px solid #f7e91b;
+  border-left: 25px solid transparent;
+  border-right: 25px solid transparent;
+  height: 0;
+}
+.trapezoidKaizen {
+  border-bottom: 50px solid #717171;
+  border-left: 25px solid transparent;
+  border-right: 25px solid transparent;
+  height: 0;
+}
+.rectangleAmarilla {
+  height: 50px;
+  background-color: #f7e91b;
+}
+.rectangleAzul {
+  height: 50px;
+  background-color: #007bff;
+}
+.rectangleRojo {
+  height: 50px;
+
+  background-color: #dc3545;
+}
+
+.rectangleVerde {
+  height: 50px;
+
+  background-color: #28a745;
+}
+.rectangleKaizen {
+  height: 50px;
+
+  background-color: #717171;
+}
+.my-flex-card > div > div.card {
+  height: calc(100% - 15px);
+  margin-bottom: 15px;
+}
+footer {
+  display: block;
+  background-color: black;
+  /* position: fixed; */
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 70px;
+  width: 100%;
+  border-top: 1px solid white;
+  text-align: right;
+}
+.container {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+.table-row {
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.ReactVirtualized__Table__headerRow {
+  border: 0;
+  color: #ff0;
+}
+.inlinebutton {
+  white-space: nowrap;
+  display: inline-block;
+}
+.dropdown {
+  position: relative;
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  padding: 12px 16px;
+  z-index: 1;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+#password {
+  -webkit-text-security: disc;
+  -moz-text-security: circle;
+  text-security: circle;
+}
+.scroll-box {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+.scroll-box__wrapper {
+  width: 100%;
+  height: 100%;
+  overflow-y: hidden;
+  overflow-x: scroll;
+}
+
+.scroll-box__container {
+  height: 100%;
+  display: inline-flex;
+}
+.cardBodymargin {
+  margin-left: 30px;
+  margin-right: 30px;
+}
+.card123 {
+  width: 300px;
+  height: 300px;
+}
+th[scope="row"] {
+  position: -webkit-sticky;
+  position: sticky;
+  left: 0;
+  z-index: 1;
+}
