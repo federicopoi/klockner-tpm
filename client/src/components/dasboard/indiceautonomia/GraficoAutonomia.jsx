@@ -9,7 +9,7 @@ export class GraficoAutonomia extends Component {
   constructor() {
     super();
     this.state = {
-      equipo: "",
+      equipo: [],
       numberMonths: "12",
     };
     this.toggleDataSeries = this.toggleDataSeries.bind(this);
@@ -24,20 +24,27 @@ export class GraficoAutonomia extends Component {
     this.chart.render();
   }
   onChange = (e) => {
-    e.target.value === "Seleccionar meses"
-      ? this.setState({
+    if (e.target.name === "numberMonths") {
+      e.target.value === "Seleccionar meses"
+        ? this.setState({
           [e.target.name]: 12,
         })
-      : this.setState({
+        : this.setState({
           [e.target.name]: e.target.value,
         });
+    } else if (e.target.name === "equipo") {
+      const selectedOptions = Array.from(e.target.selectedOptions, option => option.value);
+      this.setState({
+        [e.target.name]: selectedOptions
+      });
+    }
   };
 
   render() {
     const { tarjetas } = this.props;
 
     var filter = {
-      equipo: this.state.equipo && this.state.equipo,
+      equipo: this.state.equipo,
     };
 
     const multiFilter = (arr, filters) => {
@@ -266,10 +273,10 @@ export class GraficoAutonomia extends Component {
                   name="equipo"
                   id="equipo"
                   onChange={this.onChange}
+                  multiple
                 >
-                  <option></option>
                   {unicosEquipos.map((item, index) => {
-                    return <option key={index}>{item}</option>;
+                    return <option key={index} value={item}>{item}</option>;
                   })}
                 </Input>
               </CardBody>
