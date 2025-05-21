@@ -23,6 +23,9 @@ export class MisTarjetas extends Component {
     const { tarjetas } = this.props.tarjetas;
     console.log(this.props.tarjetaskaizen);
 
+    // Sort tarjetas by fecha in descending order
+    const sortedTarjetas = [...tarjetas].sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+
     function customRender(
       value,
       renderType,
@@ -107,7 +110,7 @@ export class MisTarjetas extends Component {
 
                 <MaterialTable
                   title=""
-                  data={tarjetas}
+                  data={sortedTarjetas}
                   options={{
                     filtering: true,
                     sorting: true,
@@ -117,6 +120,10 @@ export class MisTarjetas extends Component {
                     emptyRowsWhenPaging: true,
                     pageSizeOptions: [10, 20, 100, tarjetas.length],
                     grouping: true,
+                    initialSort: [{
+                      field: "fecha",
+                      order: "desc"
+                    }]
                   }}
                   localization={{
                     pagination: {
