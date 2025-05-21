@@ -1,56 +1,33 @@
-import React, { useState } from "react";
+import React from "react";
 import { Card, CardBody, Table } from "reactstrap";
-import ReactHTMLTableToExcel from "react-html-table-to-excel";
-import MaterialTable from "material-table";
+import { utils, writeFile } from "xlsx";
 
 const TableModal = (props) => {
-  // const newFechas = props.fechas.unshift("Mes");
+  const exportToExcel = () => {
+    // Get the table element
+    const table = document.getElementById("emp");
+    // Convert table to worksheet
+    const wb = utils.table_to_book(table);
+    // Write the file
+    writeFile(wb, "ReporteTarjetas.xlsx");
+  };
 
   return (
     <div>
       <Card>
         <CardBody>
-          {/* <MaterialTable
-            title=""
-            data={props}
-            columns={[
-              {
-                title: "Fechas",
-                field: "fechas",
-                render: (rowData) => {
-                  return rowData.fechas;
-                },
-              },
-              { title: "Prioridad", field: "prioridad" },
-              // {
-              //   title: "Fecha apertura",
-              //   field: "fecha",
-              //   render: (rowData) =>
-              //     moment(rowData.fecha).format("DD/MM/YYYY LTS"),
-              // },
-              { title: "Descripción anomalia", field: "descripcion" },
-              {
-                title: "Estado actual",
-                field: "estado",
-              },
-            ]}
-          />
           <div className="d-flex align-items-center">
             <div className="">
               <h3 className="mb-3">Tabla</h3>
             </div>
             <div className="ml-auto d-flex no-block align-items-center">
               <div className="dl">
-                <ReactHTMLTableToExcel
-                  className="btn btn-info"
-                  table="emp"
-                  filename="ReporteTarjetas"
-                  sheet="Tarjetas"
-                  buttonText="Exportar excel"
-                />
+                <button className="btn btn-info" onClick={exportToExcel}>
+                  Exportar excel
+                </button>
               </div>
             </div>
-          </div> */}
+          </div>
           <Table className="no-wrap v-middle" responsive id="emp">
             <thead>
               <tr className="border-0">

@@ -11,11 +11,14 @@ export class GraficoFiltro extends Component {
   constructor() {
     super();
     this.state = {
-      color: "",
+      color: ["Azul", "Roja", "Verde", "Amarilla"],
       equipo: "",
       prioridad: "",
       maquina: "",
+      familia: "",
       numberMonths: "12",
+      dateFrom: "0",
+      dateTo: "12",
       colorHex: "#EAA842",
     };
     this.toggleDataSeries = this.toggleDataSeries.bind(this);
@@ -63,14 +66,66 @@ export class GraficoFiltro extends Component {
     }
   };
 
-  handleChange = (e) => {
-    e.target.value === "Seleccionar meses"
-      ? this.setState({
-          [e.target.name]: 12,
-        })
-      : this.setState({
-          [e.target.name]: e.target.value,
+  handleChange = (e, value) => {
+    this.setState({
+      [e.target.name]: e.target,
+    });
+  };
+
+  onChangeMulti = (event) => {
+    if (event.target.value == "") {
+      this.setState({
+        [event.target.id]: {},
+      });
+    } else {
+      let opts = [],
+        opt;
+      for (let i = 0, len = event.target.options.length; i < len; i++) {
+        opt = event.target.options[i];
+        if (opt.selected) {
+          opts.push(opt.value);
+        }
+      }
+      if (opts.length !== 1) {
+        this.setState({
+          [event.target.id]: opts,
+          colorHex: "#EAA842",
         });
+      } else if (opts.length === 1) {
+        console.log("under");
+        if (event.target.value === "Azul" && opts.length == 1) {
+          this.setState({
+            [event.target.id]: opts,
+            colorHex: "#007bff",
+          });
+        } else if (event.target.value === "Roja" && opts.length == 1) {
+          this.setState({
+            [event.target.id]: opts,
+            colorHex: "#dc3545",
+          });
+        } else if (event.target.value === "Verde" && opts.length == 1) {
+          this.setState({
+            [event.target.id]: opts,
+            colorHex: "#28a745",
+          });
+        } else if (event.target.value === "Amarilla" && opts.length == 1) {
+          this.setState({
+            [event.target.id]: opts,
+            colorHex: "#F7E91B",
+          });
+        } else {
+          this.setState({
+            [event.target.id]: opts,
+            colorHex: "#EAA842",
+          });
+        }
+      } else {
+        this.setState({
+          [event.target.id]: opts,
+          colorHex: "#EAA842",
+        });
+      }
+    }
   };
 
   render() {
@@ -81,6 +136,7 @@ export class GraficoFiltro extends Component {
       equipo: this.state.equipo && this.state.equipo,
       prioridad: this.state.prioridad && this.state.prioridad,
       maquina: this.state.maquina && this.state.maquina,
+      familia: this.state.familia && this.state.familia,
     };
 
     const multiFilter = (arr, filters) => {
@@ -101,6 +157,9 @@ export class GraficoFiltro extends Component {
 
     const arrMaquina = tarjetas.map(({ maquina }) => maquina);
     const unicosMaquina = Array.from(new Set(arrMaquina));
+
+    const arrFamilia = tarjetas.map(({ familia }) => familia);
+    const unicosFamilia = Array.from(new Set(arrFamilia));
 
     // Formulas para "Filtro acumuladas abiertas"
 
@@ -129,9 +188,6 @@ export class GraficoFiltro extends Component {
     );
     var fechastarjetasUnicas = c.filter((item, pos) => c.indexOf(item) === pos);
 
-    console.log("Aqui");
-    console.log(fechastarjetasUnicas);
-
     const startDate = moment(fechastarjetasUnicas.sort()[0]);
     const endDate = moment(fechastarjetasUnicas.sort().slice(-1)[1]);
 
@@ -146,8 +202,29 @@ export class GraficoFiltro extends Component {
       startDate.add(1, "month");
     }
 
-    const fechastarjetasUnicasRangoCut = fechastarjetasUnicasRango.slice(
-      Math.max(fechastarjetasUnicasRango.length - this.state.numberMonths, 0)
+    fechastarjetasUnicasRango.reverse();
+    // const fechastarjetasUnicasRangoCut = fechastarjetasUnicasRango.slice(
+    //   Math.max(fechastarjetasUnicasRango.length - this.state.numberMonths, 0)
+    // );
+
+    const onChangeDatesFrom = (event) => {
+      this.setState({
+        [event.target.name]: fechastarjetasUnicasRango.indexOf(
+          event.target.value
+        ),
+      });
+    };
+    const onChangeDatesTo = (event) => {
+      const indexDate =
+        fechastarjetasUnicasRango.indexOf(event.target.value) + 1;
+      this.setState({
+        [event.target.name]: indexDate,
+      });
+    };
+
+    let fechastarjetasUnicasRangoCut = fechastarjetasUnicasRango.slice(
+      this.state.dateFrom,
+      this.state.dateTo
     );
 
     // Numero total de tarjetas de cada mes (no acumulado)
@@ -157,6 +234,8 @@ export class GraficoFiltro extends Component {
           fecha.slice(0, 7) === item.slice(0, 7)
       ).length;
     });
+
+    console.log(newFilter, "here");
 
     const arrTarjetasFiltroAcumuladas = array.map((elem, index) =>
       array.slice(0, index + 1).reduce((a, b) => a + b)
@@ -174,6 +253,7 @@ export class GraficoFiltro extends Component {
         };
       }),
     ];
+    console.log(this.state);
 
     // Formulas para "Filtro acumuladas cerradas"
 
@@ -242,15 +322,17 @@ export class GraficoFiltro extends Component {
       }),
     ];
 
+    console.log(arrTarjetasFiltroAcumuladas);
+    console.log(arrTarjetasFiltroAcumuladasCerradas);
+    console.log(arrTarjetasFiltroAcumuladasCerradasPorcentaje);
+
     const arrayMonths = [];
 
-    console.log(arrayMonths);
+    console.log(this.state);
 
     for (let i = 1; i < fechastarjetasUnicasRango.length + 1; i++) {
       arrayMonths.push(i);
     }
-
-    console.log(fechastarjetasUnicasRango);
 
     arrayMonths.reverse();
 
@@ -333,7 +415,7 @@ export class GraficoFiltro extends Component {
     return (
       <div>
         <Row>
-          <Col lg={12} md={12} sm={12}>
+          <Col lg={5} md={12} sm={12}>
             <Card>
               <CardBody>
                 <div className="d-sm-flex align-items-center">
@@ -342,72 +424,14 @@ export class GraficoFiltro extends Component {
                       <h3 className="mb-3">Grafico personalizado</h3>
                     </div>
                   </div>
-                  <div className="ml-auto d-sm-flex no-block align-items-center mb-3">
-                    <Col>
-                      <Label for="color">Color</Label>
-                      <Input
-                        type="select"
-                        name="color"
-                        id="color"
-                        onChange={this.onChange}
-                      >
-                        <option></option>
-                        <option>Azul</option>
-                        <option>Roja</option>
-                        <option>Amarilla</option>
-                        <option>Verde</option>
-                      </Input>
-                    </Col>
-                    <Col>
-                      <Label for="equipo">Equipo</Label>
-                      <Input
-                        type="select"
-                        name="equipo"
-                        id="equipo"
-                        onChange={this.onChange}
-                      >
-                        <option></option>
-                        {unicosEquipos.map((item, index) => {
-                          return <option key={index}>{item}</option>;
-                        })}
-                      </Input>
-                    </Col>
-                    <Col>
-                      <Label for="prioridad">Prioridad</Label>
-                      <Input
-                        type="select"
-                        name="prioridad"
-                        id="prioridad"
-                        onChange={this.onChange}
-                      >
-                        <option></option>
-                        <option>Alta</option>
-                        <option>Media</option>
-                        <option>Baja</option>
-                      </Input>
-                    </Col>
-                    <Col>
-                      <Label for="maquina">Máquina/Instalación</Label>
-                      <Input
-                        type="select"
-                        name="maquina"
-                        id="maquina"
-                        onChange={this.onChange}
-                      >
-                        <option></option>
-                        {unicosMaquina.map((item, index) => {
-                          return <option key={index}>{item}</option>;
-                        })}
-                      </Input>
-                    </Col>
-                  </div>
                 </div>
+
                 <CanvasJSChart
                   culture="en"
                   options={options}
                   onRef={(ref) => (this.chart = ref)}
                 />
-                <Input
+                {/* <Input
                   type="select"
                   name="numberMonths"
                   id="numberMonths"
@@ -423,11 +447,172 @@ export class GraficoFiltro extends Component {
                         </option>
                       );
                     })}
-                </Input>
+                </Input> */}
+                <Row>
+                  <Col>
+                    <Input
+                      type="select"
+                      name="dateFrom"
+                      id="dateFrom"
+                      className="mt-2"
+                      onChange={onChangeDatesFrom}
+                    >
+                      <option>Seleccionar hasta</option>
+                      {fechastarjetasUnicasRango &&
+                        fechastarjetasUnicasRango.map((item, index) => {
+                          return (
+                            <option key={index} index={index} value={item}>
+                              {item}
+                            </option>
+                          );
+                        })}
+                    </Input>
+                  </Col>
+                  <Col>
+                    <Input
+                      type="select"
+                      name="dateTo"
+                      id="dateTo"
+                      className="mt-2"
+                      onChange={onChangeDatesTo}
+                    >
+                      <option>Seleccionar desde</option>
+                      {fechastarjetasUnicasRango &&
+                        fechastarjetasUnicasRango.map((item, index) => {
+                          return (
+                            <option key={index} value={item}>
+                              {item}
+                            </option>
+                          );
+                        })}
+                    </Input>
+                  </Col>
+                </Row>
+              </CardBody>
+            </Card>
+            <Card>
+              <CardBody>
+                <div className="d-sm-flex align-items-center">
+                  <div className="">
+                    <div>
+                      <h2 className="mb-3">Filtros</h2>
+                    </div>
+                  </div>
+                </div>
+                <Row>
+                  <Col>
+                    <Label for="color">
+                      Color - {this.state.color.length} seleccionados
+                    </Label>
+                    <Input
+                      type="select"
+                      name="selectMulti"
+                      multiple
+                      id="color"
+                      onChange={(event) => {
+                        this.onChangeMulti(event);
+                      }}
+                    >
+                      <option>Azul</option>
+                      <option>Roja</option>
+                      <option>Amarilla</option>
+                      <option>Verde</option>
+                    </Input>
+                  </Col>
+                  <Col>
+                    <Label for="equipo">
+                      Equipo - {this.state.equipo.length} seleccionados
+                    </Label>
+                    <Input
+                      type="select"
+                      name="selectMulti"
+                      id="equipo"
+                      multiple
+                      onChange={(event) => {
+                        this.onChangeMulti(event);
+                      }}
+                    >
+                      <option></option>
+                      {unicosEquipos.map((item, index) => {
+                        return <option key={index}>{item}</option>;
+                      })}
+                    </Input>
+                  </Col>
+                </Row>
+                <Row className="mt-3 mb-3">
+                  <Col>
+                    <Label for="prioridad">
+                      Prioridad - {this.state.prioridad.length} seleccionados
+                    </Label>
+                    <Input
+                      type="select"
+                      name="selectMulti"
+                      id="prioridad"
+                      // onChange={this.onChange}
+                      onChange={(event) => {
+                        this.onChangeMulti(event);
+                      }}
+                      value={this.state.prioridad}
+                      multiple
+                    >
+                      <option></option>
+                      <option>Alta</option>
+                      <option>Media</option>
+                      <option>Baja</option>
+                    </Input>
+                  </Col>
+                  <Col>
+                    <Label for="maquina">
+                      Máquina/Instalación - {this.state.maquina.length}{" "}
+                      seleccionados
+                    </Label>
+                    <Input
+                      type="select"
+                      name="selectMulti"
+                      multiple
+                      style={{
+                        flex: 1,
+                        justifyContent: "center",
+                      }}
+                      id="maquina"
+                      onChange={(event) => {
+                        this.onChangeMulti(event);
+                      }}
+                    >
+                      <option></option>
+                      {unicosMaquina.map((item, index) => {
+                        return <option key={index}>{item}</option>;
+                      })}
+                    </Input>
+                  </Col>
+                </Row>
+                <Row className="mt-3 mb-3">
+                  <Col>
+                    <Label for="familia">
+                      Familia - {this.state.familia.length} seleccionados
+                    </Label>
+                    <Input
+                      type="select"
+                      name="selectMulti"
+                      id="familia"
+                      // onChange={this.onChange}
+                      onChange={(event) => {
+                        this.onChangeMulti(event);
+                      }}
+                      value={this.state.familia}
+                      multiple
+                    >
+                      <option></option>
+                      {unicosFamilia.sort().map((item, index) => {
+                        return <option key={index}>{item}</option>;
+                      })}
+                    </Input>
+                  </Col>
+                </Row>
               </CardBody>
             </Card>
           </Col>
-          <Col lg={12} md={12} sm={12}>
+          <Col lg={7} md={12} sm={12}>
             <TableModal
               tarjetasFiltro1={arrTarjetasFiltroAcumuladas}
               tarjetasFiltro2={arrTarjetasFiltroAcumuladasCerradas}

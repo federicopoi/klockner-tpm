@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { getTarjetas } from "../../store/actions/tarjetaActions";
 import { agregarFilter, getFilters } from "../../store/actions/filterActions";
-import ReactHTMLTableToExcel from "react-html-table-to-excel";
+import { utils, writeFile } from "xlsx";
 import QRCode from "qrcode.react";
 import moment from "moment";
 import {
@@ -82,6 +82,15 @@ class MisTarjetasFiltro extends Component {
     this.setState({
       [e.target.name]: e.target.value,
     });
+  };
+
+  exportToExcel = () => {
+    // Get the table element
+    const table = document.getElementById("emp");
+    // Convert table to worksheet
+    const wb = utils.table_to_book(table);
+    // Write the file
+    writeFile(wb, "ReporteTarjetas.xlsx");
   };
 
   render() {
@@ -232,13 +241,9 @@ class MisTarjetasFiltro extends Component {
                     </div>
                     <div className="ml-auto d-flex no-block align-items-center">
                       <div className="dl">
-                        <ReactHTMLTableToExcel
-                          className="btn btn-info"
-                          table="emp"
-                          filename="ReporteTarjetas"
-                          sheet="Tarjetas"
-                          buttonText="Exportar excel"
-                        />
+                        <button className="btn btn-info" onClick={this.exportToExcel}>
+                          Exportar excel
+                        </button>
                       </div>
                     </div>
                   </div>

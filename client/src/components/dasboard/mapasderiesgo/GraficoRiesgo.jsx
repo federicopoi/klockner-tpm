@@ -11,6 +11,8 @@ export class GraficoRiesgo extends Component {
     this.state = {
       equipo: "",
       familia: "",
+      dateFrom: "0",
+      dateTo: "100",
     };
     this.toggleDataSeries = this.toggleDataSeries.bind(this);
   }
@@ -27,6 +29,26 @@ export class GraficoRiesgo extends Component {
     this.setState({
       [e.target.name]: e.target.value,
     });
+  };
+
+  onChangeMulti = (event) => {
+    if (event.target.value == "") {
+      this.setState({
+        [event.target.id]: {},
+      });
+    } else {
+      let opts = [],
+        opt;
+      for (let i = 0, len = event.target.options.length; i < len; i++) {
+        opt = event.target.options[i];
+        if (opt.selected) {
+          opts.push(opt.value);
+        }
+      }
+      this.setState({
+        [event.target.id]: opts,
+      });
+    }
   };
 
   render() {
@@ -54,34 +76,114 @@ export class GraficoRiesgo extends Component {
     const unicosEquipos = Array.from(new Set(arrEquipos));
 
     const arrFamilias = tarjetas.map(({ familia }) => familia);
-    const unicosFamilias = Array.from(new Set(arrFamilias));
+    const unicosFamilias = Array.from(new Set(arrFamilias)).sort();
+
+    // Seleccionar fecha desde y hasta
+
+    // Filtro todos los meses en el que hay tarjetas abiertas Filtro
+    const fechasTarjetasFiltro = tarjetas.map(({ fecha }) =>
+      fecha.substr(0, 7)
+    );
+
+    // Filtro todos los meses en el que hay tarjetas cerradas Filtro
+    const fechasTarjetasFiltroCerradas = tarjetas
+      .filter(({ estado, color, equipo }) => estado === "Cerrada")
+      .map(({ finReparacion, color, numero }) => finReparacion.substr(0, 7));
+
+    // Borro todos los meses repetidos
+    let fechasTarjetasFiltro1 = new Set(fechasTarjetasFiltro);
+    const fechasTarjetasFiltroUnicas = [...fechasTarjetasFiltro1];
+
+    // Borro todos los meses repetidos
+    let fechasTarjetasFiltro1Cerradas = new Set(fechasTarjetasFiltroCerradas);
+    const fechasTarjetasFiltroUnicasCerradas = [
+      ...fechasTarjetasFiltro1Cerradas,
+    ];
+
+    var c = fechasTarjetasFiltroUnicas.concat(
+      fechasTarjetasFiltroUnicasCerradas
+    );
+    var fechastarjetasUnicas = c.filter((item, pos) => c.indexOf(item) === pos);
+
+    const startDate = moment(fechastarjetasUnicas.sort()[0]);
+    const endDate = moment(fechastarjetasUnicas.sort().slice(-1)[1]);
+
+    const fechastarjetasUnicasRango = [];
+
+    if (endDate.isBefore(startDate)) {
+      throw "End date must be greated than start date.";
+    }
+
+    while (startDate.isBefore(endDate)) {
+      fechastarjetasUnicasRango.push(startDate.format("YYYY-MM"));
+      startDate.add(1, "month");
+    }
+
+    fechastarjetasUnicasRango.reverse();
+
+    const onChangeDatesFrom = (event) => {
+      this.setState({
+        [event.target.name]: fechastarjetasUnicasRango.indexOf(
+          event.target.value
+        ),
+      });
+    };
+    const onChangeDatesTo = (event) => {
+      const indexDate =
+        fechastarjetasUnicasRango.indexOf(event.target.value) + 1;
+      this.setState({
+        [event.target.name]: indexDate,
+      });
+    };
+
+    let fechastarjetasUnicasRangoCut = fechastarjetasUnicasRango.slice(
+      this.state.dateFrom,
+      this.state.dateTo
+    );
+
+    // Numero total de tarjetas de cada mes (no acumulado)
+    let array = fechastarjetasUnicasRangoCut.sort().map((item, index) => {
+      return newFilter
+        .filter(
+          ({ estado, fecha, color, equipo }) =>
+            fecha.slice(0, 7) === item.slice(0, 7)
+        )
+        .map((item) => item);
+    });
+
+    let arr = [];
+    for (const item of array) {
+      for (const subitem of item) {
+        arr.push(subitem);
+      }
+    }
 
     // Formulas para "Mapas de Riesgo"
 
     // Cantidad de tarjetas abiertas de newFilter
 
-    const arrAbiertas = newFilter.filter(({ estado }) => {
+    const arrAbiertas = arr.filter(({ estado }) => {
       return estado === "Abierta";
     });
 
-    const arrCerradas = newFilter.filter(({ estado }) => {
+    const arrCerradas = arr.filter(({ estado }) => {
       return estado === "Cerrada";
     });
 
     // Porcentaje de puntos tratados
 
-    const arrPorcentajePuntos = (arrCerradas.length * 100) / newFilter.length;
+    const arrPorcentajePuntos = (arrCerradas.length * 100) / arr.length;
 
     // Nivel Riesgo Inicial
 
     // No significativo
-    const RI1 = newFilter.filter(({ riesgoInicial }) =>
+    const RI1 = arr.filter(({ riesgoInicial }) =>
       riesgoInicial.toLowerCase().includes("NS: NO SIGNIFICATIVO".toLowerCase())
     ).length;
 
     // Poco significativo
     const RI2 =
-      newFilter.filter(({ riesgoInicial }) =>
+      arr.filter(({ riesgoInicial }) =>
         riesgoInicial
           .toLowerCase()
           .includes("PS: POCO SIGNIFICATIVO".toLowerCase())
@@ -89,19 +191,19 @@ export class GraficoRiesgo extends Component {
 
     // Moderado
     const RI3 =
-      newFilter.filter(({ riesgoInicial }) =>
+      arr.filter(({ riesgoInicial }) =>
         riesgoInicial.toLowerCase().includes("MO: MODERADO".toLowerCase())
       ).length * 3;
 
     // Sigfificativo
     const RI4 =
-      newFilter.filter(({ riesgoInicial }) =>
+      arr.filter(({ riesgoInicial }) =>
         riesgoInicial.toLowerCase().includes("SI: SIGNIFICATIVO".toLowerCase())
       ).length * 4;
 
     // Intolerable
     const RI5 =
-      newFilter.filter(({ riesgoInicial }) =>
+      arr.filter(({ riesgoInicial }) =>
         riesgoInicial.toLowerCase().includes("IN: INTOLERABLE".toLowerCase())
       ).length * 5;
 
@@ -177,20 +279,13 @@ export class GraficoRiesgo extends Component {
     const nivelRiesgoFinal =
       RI1A + RI2A + RI3A + RI4A + RI5A + RI1B + RI2B + RI3B + RI4B + RI5B;
 
-    console.log("+");
-    console.log(RI1B);
-    console.log(RI2B);
-    console.log(RI3B);
-    console.log(RI4B);
-    console.log(RI5B);
-
     const reduccionRiesgo =
       ((nivelRiesgoInicial - nivelRiesgoFinal) / nivelRiesgoInicial) * 100;
 
     return (
       <div>
         <Row>
-          <Col lg={8} md={12} sm={12}>
+          <Col lg={5} md={12} sm={12}>
             <Card>
               <CardBody>
                 <h3>Tabla Mapas de riesgo</h3>
@@ -204,7 +299,7 @@ export class GraficoRiesgo extends Component {
                     <tr>
                       <td>Tarjetas abiertas | | Tarjetas cerradas</td>
                       <td>
-                        {newFilter.length} | | {arrCerradas.length}
+                        {arr.length} | | {arrCerradas.length}
                       </td>
                     </tr>
                     <tr>
@@ -230,16 +325,62 @@ export class GraficoRiesgo extends Component {
               </CardBody>
             </Card>
           </Col>
-          <Col lg={4} md={12} sm={12}>
+          <Col lg={7} md={12} sm={12}>
             <Card>
               <CardBody>
                 <h3>Filtros</h3>
-                <Label for="equipo">Equipo</Label>
+                <Row>
+                  <Col>
+                    <Input
+                      type="select"
+                      name="dateFrom"
+                      id="dateFrom"
+                      className="mt-2"
+                      onChange={onChangeDatesFrom}
+                    >
+                      <option>Seleccionar hasta</option>
+                      {fechastarjetasUnicasRango &&
+                        fechastarjetasUnicasRango.map((item, index) => {
+                          return (
+                            <option key={index} index={index} value={item}>
+                              {item}
+                            </option>
+                          );
+                        })}
+                    </Input>
+                  </Col>
+                  <Col>
+                    <Input
+                      type="select"
+                      name="dateTo"
+                      id="dateTo"
+                      className="mt-2"
+                      onChange={onChangeDatesTo}
+                    >
+                      <option>Seleccionar desde</option>
+                      {fechastarjetasUnicasRango &&
+                        fechastarjetasUnicasRango.map((item, index) => {
+                          return (
+                            <option key={index} value={item}>
+                              {item}
+                            </option>
+                          );
+                        })}
+                    </Input>
+                  </Col>
+                </Row>
+                <Label for="equipo" className="mt-3">
+                  Equipo - {this.state.equipo.length} seleccionados
+                </Label>
                 <Input
                   type="select"
-                  name="equipo"
+                  name="selectMulti"
                   id="equipo"
-                  onChange={this.onChange}
+                  onChange={(event) => {
+                    this.onChangeMulti(event);
+                  }}
+                  value={this.state.equipo}
+                  multiple
                 >
                   <option></option>
                   {unicosEquipos.map((item, index) => {
@@ -247,13 +388,17 @@ export class GraficoRiesgo extends Component {
                   })}
                 </Input>
                 <Label for="equipo" className="mt-3">
-                  Familia
+                  Familia - {this.state.familia.length} seleccionados
                 </Label>
                 <Input
                   type="select"
-                  name="familia"
+                  name="selectMulti"
                   id="familia"
-                  onChange={this.onChange}
+                  onChange={(event) => {
+                    this.onChangeMulti(event);
+                  }}
+                  value={this.state.familia}
+                  multiple
                 >
                   <option></option>
                   {unicosFamilias.map((item, index) => {

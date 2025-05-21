@@ -1,9 +1,19 @@
 import React, { useState } from "react";
 import { Card, CardBody, Table } from "reactstrap";
-import ReactHTMLTableToExcel from "react-html-table-to-excel";
+import { utils, writeFile } from "xlsx";
+
 const TableModalAutonomia = (props) => {
   const [modal, setModal] = useState(false);
   const toggle = () => setModal(!modal);
+
+  const exportToExcel = () => {
+    // Get the table element
+    const table = document.getElementById("emp");
+    // Convert table to worksheet
+    const wb = utils.table_to_book(table);
+    // Write the file
+    writeFile(wb, "ReporteTarjetas.xlsx");
+  };
 
   return (
     <div>
@@ -15,13 +25,9 @@ const TableModalAutonomia = (props) => {
             </div>
             <div className="ml-auto d-flex no-block align-items-center">
               <div className="dl">
-                <ReactHTMLTableToExcel
-                  className="btn btn-info"
-                  table="emp"
-                  filename="ReporteTarjetas"
-                  sheet="Tarjetas"
-                  buttonText="Exportar excel"
-                />
+                <button className="btn btn-info" onClick={exportToExcel}>
+                  Exportar excel
+                </button>
               </div>
             </div>
           </div>

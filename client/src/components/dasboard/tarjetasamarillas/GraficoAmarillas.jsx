@@ -12,6 +12,8 @@ export class GraficoAmarillas extends Component {
     super();
     this.state = {
       numberMonths: "12",
+      dateFrom: "0",
+      dateTo: "12",
     };
     this.toggleDataSeries = this.toggleDataSeries.bind(this);
   }
@@ -27,11 +29,11 @@ export class GraficoAmarillas extends Component {
   onChange = (e) => {
     e.target.value === "Seleccionar meses"
       ? this.setState({
-          [e.target.name]: 12,
-        })
+        [e.target.name]: 12,
+      })
       : this.setState({
-          [e.target.name]: e.target.value,
-        });
+        [e.target.name]: e.target.value,
+      });
   };
 
   render() {
@@ -82,8 +84,24 @@ export class GraficoAmarillas extends Component {
       startDate.add(1, "month");
     }
 
-    const fechastarjetasUnicasRangoCut = fechastarjetasUnicasRango.slice(
-      Math.max(fechastarjetasUnicasRango.length - this.state.numberMonths, 0)
+    fechastarjetasUnicasRango.reverse();
+
+    const onChangeDatesFrom = (event) => {
+      this.setState({
+        [event.target.name]: fechastarjetasUnicasRango.indexOf(event.target.value),
+      });
+    };
+
+    const onChangeDatesTo = (event) => {
+      const indexDate = fechastarjetasUnicasRango.indexOf(event.target.value) + 1;
+      this.setState({
+        [event.target.name]: indexDate,
+      });
+    };
+
+    let fechastarjetasUnicasRangoCut = fechastarjetasUnicasRango.slice(
+      this.state.dateFrom,
+      this.state.dateTo
     );
 
     // Numero total de tarjetas de cada mes (no acumulado)
@@ -272,29 +290,51 @@ export class GraficoAmarillas extends Component {
             <Card>
               <CardBody>
                 <h3 className="mb-3">Evolucion de Tarjetas amarillas</h3>
-
                 <CanvasJSChart
                   culture="en"
                   options={options}
                   onRef={(ref) => (this.chart = ref)}
                 />
-                <Input
-                  type="select"
-                  name="numberMonths"
-                  id="numberMonths"
-                  className="mt-2"
-                  onChange={this.onChange}
-                >
-                  <option>Seleccionar meses</option>
-                  {arrayMonths &&
-                    arrayMonths.map((item, index) => {
-                      return (
-                        <option key={index} value={item}>
-                          {`Últimos ${item} meses`}
-                        </option>
-                      );
-                    })}
-                </Input>
+                <Row>
+                  <Col>
+                    <Input
+                      type="select"
+                      name="dateFrom"
+                      id="dateFrom"
+                      className="mt-2"
+                      onChange={onChangeDatesFrom}
+                    >
+                      <option>Seleccionar hasta</option>
+                      {fechastarjetasUnicasRango &&
+                        fechastarjetasUnicasRango.map((item, index) => {
+                          return (
+                            <option key={index} index={index} value={item}>
+                              {item}
+                            </option>
+                          );
+                        })}
+                    </Input>
+                  </Col>
+                  <Col>
+                    <Input
+                      type="select"
+                      name="dateTo"
+                      id="dateTo"
+                      className="mt-2"
+                      onChange={onChangeDatesTo}
+                    >
+                      <option>Seleccionar desde</option>
+                      {fechastarjetasUnicasRango &&
+                        fechastarjetasUnicasRango.map((item, index) => {
+                          return (
+                            <option key={index} value={item}>
+                              {item}
+                            </option>
+                          );
+                        })}
+                    </Input>
+                  </Col>
+                </Row>
               </CardBody>
             </Card>
           </Col>
