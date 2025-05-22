@@ -415,7 +415,8 @@ export class GraficoFiltro extends Component {
     return (
       <div>
         <Row>
-          <Col lg={5} md={12} sm={12}>
+          <Col lg={12} md={12} sm={12}>
+
             <Card>
               <CardBody>
                 <div className="d-sm-flex align-items-center">
@@ -612,7 +613,7 @@ export class GraficoFiltro extends Component {
               </CardBody>
             </Card>
           </Col>
-          <Col lg={7} md={12} sm={12}>
+          <Col lg={12} md={12} sm={12}>
             <TableModal
               tarjetasFiltro1={arrTarjetasFiltroAcumuladas}
               tarjetasFiltro2={arrTarjetasFiltroAcumuladasCerradas}

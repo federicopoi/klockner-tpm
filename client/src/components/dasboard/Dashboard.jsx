@@ -25,8 +25,8 @@ import Notifications from "../notifications/Notifications";
 class DashBoard extends Component {
   state = {
     activeTab: "1",
-    lgDashboard: "7",
-    lgNotifications: "5",
+    lgDashboard: "12",
+    lgNotifications: "12",
     arrow: "<",
   };
   componentDidMount() {

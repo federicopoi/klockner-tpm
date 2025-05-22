@@ -285,7 +285,7 @@ export class GraficoRiesgo extends Component {
     return (
       <div>
         <Row>
-          <Col lg={5} md={12} sm={12}>
+          <Col lg={12} md={12} sm={12}>
             <Card>
               <CardBody>
                 <h3>Tabla Mapas de riesgo</h3>
