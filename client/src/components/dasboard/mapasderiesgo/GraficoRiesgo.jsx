@@ -333,10 +333,10 @@ export class GraficoRiesgo extends Component {
                   <Col>
                     <Input
                       type="select"
-                      name="dateTo"
-                      id="dateTo"
+                      name="dateFrom"
+                      id="dateFrom"
                       className="mt-2"
-                      onChange={onChangeDatesTo}
+                      onChange={onChangeDatesFrom}
                     >
                       <option>Seleccionar desde</option>
                       {fechastarjetasUnicasRango &&
@@ -352,10 +352,10 @@ export class GraficoRiesgo extends Component {
                   <Col>
                     <Input
                       type="select"
-                      name="dateFrom"
-                      id="dateFrom"
+                      name="dateTo"
+                      id="dateTo"
                       className="mt-2"
-                      onChange={onChangeDatesFrom}
+                      onChange={onChangeDatesTo}
                     >
                       <option>Seleccionar hasta</option>
                       {fechastarjetasUnicasRango &&

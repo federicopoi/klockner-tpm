@@ -19,16 +19,12 @@ const TableModalAutonomia = (props) => {
     <div>
       <Card>
         <CardBody>
-          <div className="d-flex align-items-center">
-            <div className="">
-              <h3 className="mb-3">Tabla</h3>
-            </div>
-            <div className="ml-auto d-flex no-block align-items-center">
-              <div className="dl">
-                <button className="btn btn-info" onClick={exportToExcel}>
-                  Exportar excel
-                </button>
-              </div>
+          <div className="d-flex align-items-center mb-3">
+            <h3 className="mb-0">Tabla</h3>
+            <div className="ml-auto">
+              <button className="btn btn-info" onClick={exportToExcel}>
+                Exportar excel
+              </button>
             </div>
           </div>
           <Table className="no-wrap v-middle" responsive id="emp">

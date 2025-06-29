@@ -5,6 +5,7 @@ import { Row, Col, Card, CardBody, Label, Input } from "reactstrap";
 import moment from "moment";
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 var CanvasJS = CanvasJSReact.CanvasJS;
+
 export class GraficoAutonomia extends Component {
   constructor() {
     super();
@@ -16,27 +17,65 @@ export class GraficoAutonomia extends Component {
     };
     this.toggleDataSeries = this.toggleDataSeries.bind(this);
   }
+
+  componentDidMount() {
+    this.updateAvailableDates();
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.tarjetas !== this.props.tarjetas) {
+      this.updateAvailableDates();
+    }
+  }
+
+  updateAvailableDates = () => {
+    const { tarjetas } = this.props;
+
+    // Get all dates from tarjetas
+    const fechasTarjetasConvertidas = tarjetas
+      .map(({ fecha }) => fecha.substr(0, 7));
+
+    // Remove duplicates
+    let fechasTarjetasConvertidas1 = new Set(fechasTarjetasConvertidas);
+    const fechasTarjetasConvertidasUnicas = [...fechasTarjetasConvertidas1];
+
+    const startDate = moment(fechasTarjetasConvertidasUnicas.sort()[0]);
+    const endDate = moment(fechasTarjetasConvertidasUnicas.sort().slice(-1)[1]);
+
+    const fechastarjetasUnicasRango = [];
+
+    if (!endDate.isBefore(startDate)) {
+      let currentDate = startDate.clone();
+      while (currentDate.isSameOrBefore(endDate)) {
+        fechastarjetasUnicasRango.push(currentDate.format("YYYY-MM"));
+        currentDate.add(1, "month");
+      }
+    }
+
+    fechastarjetasUnicasRango.reverse();
+
+    // Set initial state to show last 12 months
+    const totalMonths = fechastarjetasUnicasRango.length;
+    const initialFromIndex = Math.min(12, totalMonths);
+
+    this.setState({
+      dateFrom: 0,
+      dateTo: initialFromIndex,
+    });
+  }
+
   toggleDataSeries(e) {
     if (typeof e.dataSeries.visible === "undefined" || e.dataSeries.visible) {
       e.dataSeries.visible = false;
     } else {
       e.dataSeries.visible = true;
     }
-
     this.chart.render();
   }
+
   onChange = (e) => {
-    if (e.target.name === "numberMonths") {
-      e.target.value === "Seleccionar meses"
-        ? this.setState({
-          [e.target.name]: 12,
-        })
-        : this.setState({
-          [e.target.name]: e.target.value,
-        });
-    } else if (e.target.name === "equipo") {
+    if (e.target.name === "equipo") {
       const selectedOptions = Array.from(e.target.selectedOptions, option => option.value);
-      // If the empty option is selected, clear all selections
       if (selectedOptions.includes("")) {
         this.setState({
           [e.target.name]: []
@@ -61,7 +100,7 @@ export class GraficoAutonomia extends Component {
       return arr.filter((eachObj) => {
         return filterKeys.every((eachKey) => {
           if (!filters[eachKey].length) {
-            return true; // passing an empty filter means that filter is ignored.
+            return true;
           }
           return filters[eachKey].includes(eachObj[eachKey]);
         });
@@ -69,19 +108,14 @@ export class GraficoAutonomia extends Component {
     };
     const newFilter = multiFilter(tarjetas, filter);
 
-    console.log(newFilter);
-
     const arrEquipos = tarjetas.map(({ equipo }) => equipo);
     const unicosEquipos = Array.from(new Set(arrEquipos));
 
-    // Formulas para "Indice de autonomia"
-
-    // Filtro todos los meses en el que hay tarjetas convertidas
+    // Get all dates from tarjetas
     const fechasTarjetasConvertidas = newFilter
-      // .filter(({ estado, convertida }) => convertida === true)
       .map(({ fecha }) => fecha.substr(0, 7));
 
-    // Borro todos los meses repetidos
+    // Remove duplicates
     let fechasTarjetasConvertidas1 = new Set(fechasTarjetasConvertidas);
     const fechasTarjetasConvertidasUnicas = [...fechasTarjetasConvertidas1];
 
@@ -90,29 +124,15 @@ export class GraficoAutonomia extends Component {
 
     const fechastarjetasUnicasRango = [];
 
-    if (endDate.isBefore(startDate)) {
-      throw "End date must be greated than start date.";
-    }
-
-    while (startDate.isBefore(endDate)) {
-      fechastarjetasUnicasRango.push(startDate.format("YYYY-MM"));
-      startDate.add(1, "month");
+    if (!endDate.isBefore(startDate)) {
+      let currentDate = startDate.clone();
+      while (currentDate.isSameOrBefore(endDate)) {
+        fechastarjetasUnicasRango.push(currentDate.format("YYYY-MM"));
+        currentDate.add(1, "month");
+      }
     }
 
     fechastarjetasUnicasRango.reverse();
-
-    const onChangeDatesFrom = (event) => {
-      this.setState({
-        [event.target.name]: fechastarjetasUnicasRango.indexOf(event.target.value),
-      });
-    };
-
-    const onChangeDatesTo = (event) => {
-      const indexDate = fechastarjetasUnicasRango.indexOf(event.target.value) + 1;
-      this.setState({
-        [event.target.name]: indexDate,
-      });
-    };
 
     let fechastarjetasUnicasRangoCut = fechastarjetasUnicasRango.slice(
       this.state.dateFrom,
@@ -149,7 +169,6 @@ export class GraficoAutonomia extends Component {
       array2.slice(0, index + 1).reduce((a, b) => a + b)
     );
 
-    console.log(array2Acum);
     // Numero total de tarjetas de cada mes (no acumulado)
     let array3 = fechastarjetasUnicasRangoCut.sort().map((item, index) => {
       return newFilter.filter(
@@ -171,8 +190,6 @@ export class GraficoAutonomia extends Component {
           ((array1Acum[index] + array2Acum[index]) / array3Acum[index]) * 100
         );
       });
-
-    console.log(arrayAcumFinal);
 
     // Datos para el grafico
     const ConvertidasData = [
@@ -250,57 +267,33 @@ export class GraficoAutonomia extends Component {
       ],
     };
 
+    const onChangeDatesFrom = (event) => {
+      this.setState({
+        [event.target.name]: fechastarjetasUnicasRango.indexOf(event.target.value),
+      });
+    };
+
+    const onChangeDatesTo = (event) => {
+      const indexDate = fechastarjetasUnicasRango.indexOf(event.target.value) + 1;
+      this.setState({
+        [event.target.name]: indexDate,
+      });
+    };
+
     return (
       <div>
         <Row>
-          <Col lg={5} md={12} sm={12}>
+          <Col lg={12} md={12} sm={12} className="mb-4">
             <Card>
               <CardBody>
                 <h3 className="mb-3">Indice de autonomia</h3>
-
                 <CanvasJSChart
                   culture="en"
                   options={options}
                   onRef={(ref) => (this.chart = ref)}
                 />
-                {/* <Input
-                  type="select"
-                  name="numberMonths"
-                  id="numberMonths"
-                  className="mt-2"
-                  onChange={this.onChange}
-                >
-                  <option>Seleccionar meses</option>
-                  {arrayMonths &&
-                    arrayMonths.map((item, index) => {
-                      return (
-                        <option key={index} value={item}>
-                          {`Últimos ${item} meses`}
-                        </option>
-                      );
-                    })}
-                </Input> */}
-                <Row>
-                  <Col>
-                    <Input
-                      type="select"
-                      name="dateFrom"
-                      id="dateFrom"
-                      className="mt-2"
-                      onChange={onChangeDatesFrom}
-                    >
-                      <option>Seleccionar desde</option>
-                      {fechastarjetasUnicasRango &&
-                        fechastarjetasUnicasRango.map((item, index) => {
-                          return (
-                            <option key={index} index={index} value={item}>
-                              {item}
-                            </option>
-                          );
-                        })}
-                    </Input>
-                  </Col>
-                  <Col>
+                <Row className="mt-3">
+                  <Col md={6}>
                     <Input
                       type="select"
                       name="dateTo"
@@ -308,27 +301,45 @@ export class GraficoAutonomia extends Component {
                       className="mt-2"
                       onChange={onChangeDatesTo}
                     >
+                      <option>Seleccionar desde</option>
+                      {fechastarjetasUnicasRango &&
+                        fechastarjetasUnicasRango.map((item, index) => (
+                          <option key={index} value={item}>
+                            {item}
+                          </option>
+                        ))}
+                    </Input>
+                  </Col>
+                  <Col md={6}>
+                    <Input
+                      type="select"
+                      name="dateFrom"
+                      id="dateFrom"
+                      className="mt-2"
+                      onChange={onChangeDatesFrom}
+                    >
                       <option>Seleccionar hasta</option>
                       {fechastarjetasUnicasRango &&
-                        fechastarjetasUnicasRango.map((item, index) => {
-                          return (
-                            <option key={index} value={item}>
-                              {item}
-                            </option>
-                          );
-                        })}
+                        fechastarjetasUnicasRango.map((item, index) => (
+                          <option key={index} value={item}>
+                            {item}
+                          </option>
+                        ))}
                     </Input>
                   </Col>
                 </Row>
               </CardBody>
             </Card>
           </Col>
-          <Col lg={7} md={12} sm={12}>
+        </Row>
+        <Row>
+          <Col lg={6} md={12} sm={12}>
             <TableModalAutonomia
               tarjetasFiltro1={arrayAcumFinal}
               fechas={fechastarjetasUnicasRangoCut}
             ></TableModalAutonomia>
-
+          </Col>
+          <Col lg={6} md={12} sm={12}>
             <Card>
               <CardBody>
                 <h3>Filtros</h3>
