@@ -290,25 +290,6 @@ export class GraficoRojas extends Component {
                   <Col>
                     <Input
                       type="select"
-                      name="dateFrom"
-                      id="dateFrom"
-                      className="mt-2"
-                      onChange={onChangeDatesFrom}
-                    >
-                      <option>Seleccionar hasta</option>
-                      {fechastarjetasUnicasRango &&
-                        fechastarjetasUnicasRango.map((item, index) => {
-                          return (
-                            <option key={index} index={index} value={item}>
-                              {item}
-                            </option>
-                          );
-                        })}
-                    </Input>
-                  </Col>
-                  <Col>
-                    <Input
-                      type="select"
                       name="dateTo"
                       id="dateTo"
                       className="mt-2"
@@ -319,6 +300,25 @@ export class GraficoRojas extends Component {
                         fechastarjetasUnicasRango.map((item, index) => {
                           return (
                             <option key={index} value={item}>
+                              {item}
+                            </option>
+                          );
+                        })}
+                    </Input>
+                  </Col>
+                  <Col>
+                    <Input
+                      type="select"
+                      name="dateFrom"
+                      id="dateFrom"
+                      className="mt-2"
+                      onChange={onChangeDatesFrom}
+                    >
+                      <option>Seleccionar hasta</option>
+                      {fechastarjetasUnicasRango &&
+                        fechastarjetasUnicasRango.map((item, index) => {
+                          return (
+                            <option key={index} index={index} value={item}>
                               {item}
                             </option>
                           );
