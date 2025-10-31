@@ -35,12 +35,27 @@ export class GraficoAutonomia extends Component {
     const fechasTarjetasConvertidas = tarjetas
       .map(({ fecha }) => fecha.substr(0, 7));
 
+    const fechasTarjetasFiltroCerradas = tarjetas
+      .filter(({ estado }) => estado === "Cerrada")
+      .map(({ finReparacion }) => finReparacion.substr(0, 7));
+
     // Remove duplicates
     let fechasTarjetasConvertidas1 = new Set(fechasTarjetasConvertidas);
-    const fechasTarjetasConvertidasUnicas = [...fechasTarjetasConvertidas1];
+    const fechasTarjetasFiltroUnicas = [...fechasTarjetasConvertidas1];
 
-    const startDate = moment(fechasTarjetasConvertidasUnicas.sort()[0]);
-    const endDate = moment(fechasTarjetasConvertidasUnicas.sort().slice(-1)[1]);
+    let fechasTarjetasFiltro1Cerradas = new Set(fechasTarjetasFiltroCerradas);
+    const fechasTarjetasFiltroUnicasCerradas = [
+      ...fechasTarjetasFiltro1Cerradas,
+    ];
+
+    var c = fechasTarjetasFiltroUnicas.concat(
+      fechasTarjetasFiltroUnicasCerradas
+    );
+    var fechastarjetasUnicas = c.filter((item, pos) => c.indexOf(item) === pos);
+
+
+    const startDate = moment(fechastarjetasUnicas.sort()[0]);
+    const endDate = moment(fechastarjetasUnicas.sort().slice(-1)[1]);
 
     const fechastarjetasUnicasRango = [];
 
@@ -112,15 +127,30 @@ export class GraficoAutonomia extends Component {
     const unicosEquipos = Array.from(new Set(arrEquipos));
 
     // Get all dates from tarjetas
-    const fechasTarjetasConvertidas = newFilter
+    const fechasTarjetasConvertidas = tarjetas
       .map(({ fecha }) => fecha.substr(0, 7));
+
+    const fechasTarjetasFiltroCerradas = tarjetas
+      .filter(({ estado }) => estado === "Cerrada")
+      .map(({ finReparacion }) => finReparacion.substr(0, 7));
 
     // Remove duplicates
     let fechasTarjetasConvertidas1 = new Set(fechasTarjetasConvertidas);
-    const fechasTarjetasConvertidasUnicas = [...fechasTarjetasConvertidas1];
+    const fechasTarjetasFiltroUnicas = [...fechasTarjetasConvertidas1];
 
-    const startDate = moment(fechasTarjetasConvertidasUnicas.sort()[0]);
-    const endDate = moment(fechasTarjetasConvertidasUnicas.sort().slice(-1)[1]);
+    let fechasTarjetasFiltro1Cerradas = new Set(fechasTarjetasFiltroCerradas);
+    const fechasTarjetasFiltroUnicasCerradas = [
+      ...fechasTarjetasFiltro1Cerradas,
+    ];
+
+    var c = fechasTarjetasFiltroUnicas.concat(
+      fechasTarjetasFiltroUnicasCerradas
+    );
+    var fechastarjetasUnicas = c.filter((item, pos) => c.indexOf(item) === pos);
+
+
+    const startDate = moment(fechastarjetasUnicas.sort()[0]);
+    const endDate = moment(fechastarjetasUnicas.sort().slice(-1)[1]);
 
     const fechastarjetasUnicasRango = [];
 
@@ -142,10 +172,10 @@ export class GraficoAutonomia extends Component {
     // Numero total de tarjetas de cada mes (no acumulado)
     let array1 = fechastarjetasUnicasRangoCut.sort().map((item, index) => {
       return newFilter.filter(
-        ({ estado, fecha, color }) =>
+        ({ estado, finReparacion, color }) =>
           color === "Azul" &&
           estado === "Cerrada" &&
-          fecha.slice(0, 7) === item.slice(0, 7)
+          finReparacion.slice(0, 7) === item.slice(0, 7)
       ).length;
     });
 
@@ -157,10 +187,10 @@ export class GraficoAutonomia extends Component {
     // Numero total de tarjetas de cada mes (no acumulado)
     let array2 = fechastarjetasUnicasRangoCut.sort().map((item, index) => {
       return newFilter.filter(
-        ({ estado, fecha, convertida }) =>
+        ({ estado, finReparacion, convertida }) =>
           convertida === true &&
           estado === "Cerrada" &&
-          fecha.slice(0, 7) === item.slice(0, 7)
+          finReparacion.slice(0, 7) === item.slice(0, 7)
       ).length;
     });
 
@@ -172,8 +202,9 @@ export class GraficoAutonomia extends Component {
     // Numero total de tarjetas de cada mes (no acumulado)
     let array3 = fechastarjetasUnicasRangoCut.sort().map((item, index) => {
       return newFilter.filter(
-        ({ estado, fecha }) =>
-          estado === "Cerrada" && fecha.slice(0, 7) === item.slice(0, 7)
+        ({ estado, finReparacion, color }) =>
+          estado === "Cerrada" && finReparacion.slice(0, 7) === item.slice(0, 7) &&
+          ["Azul", "Roja", "Verde", "Amarilla"].includes(color)
       ).length;
     });
 
@@ -181,6 +212,23 @@ export class GraficoAutonomia extends Component {
     const array3Acum = array3.map((elem, index) =>
       array3.slice(0, index + 1).reduce((a, b) => a + b)
     );
+
+    // --- DEBUGGING LOGS ---
+    fechastarjetasUnicasRangoCut.forEach((month, index) => {
+      const monthStr = month.slice(5, 7);
+      if (monthStr === "09" || monthStr === "10") {
+        console.log(`--- DEBUG ${month} ---`);
+        console.log("Azules Cerradas Acumuladas:", array1Acum[index]);
+        console.log("Convertidas Cerradas Acumuladas:", array2Acum[index]);
+        console.log("Total Cerradas (4 colores):", array3Acum[index]);
+        const totalNumerator = array1Acum[index] + array2Acum[index];
+        const percentage = array3Acum[index] > 0 ? (totalNumerator / array3Acum[index]) * 100 : 0;
+        console.log("Numerador Total (Azules + Convertidas):", totalNumerator);
+        console.log("Indice de Autonomia Calculado:", percentage);
+        console.log("--- END DEBUG ---");
+      }
+    });
+    // --- END DEBUGGING LOGS ---
 
     // Numero total de tarjetas de cada mes (no acumulado)
     let arrayAcumFinal = fechastarjetasUnicasRangoCut
