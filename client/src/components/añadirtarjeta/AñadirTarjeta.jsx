@@ -46,6 +46,7 @@ class AñadirTarjeta extends Component {
     sustoObservado: false,
     impactoAmbiente: false,
     msg: null,
+    isSubmitting: false,
   };
 
   componentDidUpdate(prevProps) {
@@ -56,6 +57,7 @@ class AñadirTarjeta extends Component {
       if (error.id === "AGREGAR_TARJETA_ERROR") {
         this.setState({
           msg: error.msg.msg,
+          isSubmitting: false, // Re-enable button on error
         });
       } else {
         this.setState({
@@ -82,6 +84,12 @@ class AñadirTarjeta extends Component {
   };
   onSubmit = (e) => {
     e.preventDefault();
+
+    // Prevent multiple submissions
+    if (this.state.isSubmitting) {
+      return;
+    }
+
     const {
       numero,
       descripcion,
@@ -139,10 +147,12 @@ class AñadirTarjeta extends Component {
     };
     if (this.state.color !== "Amarilla") {
       if (this.state.detecto !== "Seleccionar") {
+        this.setState({ isSubmitting: true });
         this.props.agregarTarjeta(nuevaTarjeta);
       }
     } else {
       if (this.state.detecto !== "Seleccionar") {
+        this.setState({ isSubmitting: true });
         this.props.agregarTarjetaAmarilla(nuevaTarjetaAmarilla);
       }
     }
@@ -581,7 +591,9 @@ class AñadirTarjeta extends Component {
 
                 <Row className="mt-3">
                   <Col>
-                    <Button>Subir</Button>
+                    <Button disabled={this.state.isSubmitting}>
+                      {this.state.isSubmitting ? "Enviando..." : "Subir"}
+                    </Button>
                   </Col>
                 </Row>
               </Form>
