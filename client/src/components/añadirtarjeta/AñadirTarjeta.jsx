@@ -592,7 +592,7 @@ class AñadirTarjeta extends Component {
                 <Row className="mt-3">
                   <Col>
                     <Button disabled={this.state.isSubmitting}>
-                      {this.state.isSubmitting ? "Enviando..." : "Subir"}
+                      {this.state.isSubmitting ? "Subiendo..." : "Subir"}
                     </Button>
                   </Col>
                 </Row>
