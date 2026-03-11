@@ -111,13 +111,13 @@ export class AdminUsuarios extends Component {
                           <th className="border-0">N° Legajo</th>
                           <th className="border-0">Nombre</th>
                           <th className="border-0">Rol</th>
-                          <th className="border-0">Última conexión</th>
+                          <th className="border-0">Última actividad</th>
                           <th className="border-0">Horas</th>
                           <th className="border-0">Acciones</th>
                         </tr>
                       </thead>
                       {users &&
-                        users.map(({ name, email, role, _id, lastLogin }) => {
+                        users.map(({ name, email, role, _id, lastActivity }) => {
                           return (
                             <tbody key={_id}>
                               <tr>
@@ -125,15 +125,15 @@ export class AdminUsuarios extends Component {
                                 <td>{name}</td>
                                 <td>{role}</td>
                                 <td>
-                                  {lastLogin
-                                    ? new Date(lastLogin).toLocaleString("es-AR", {
+                                  {lastActivity
+                                    ? new Date(lastActivity).toLocaleString("es-AR", {
                                         day: "2-digit",
                                         month: "2-digit",
                                         year: "numeric",
                                         hour: "2-digit",
                                         minute: "2-digit",
                                       })
-                                    : "Sin conexión"}
+                                    : "Sin actividad"}
                                 </td>
                                 <td>
                                   <HorasModal _id={_id}></HorasModal>

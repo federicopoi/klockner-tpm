@@ -44,6 +44,10 @@ const UserSchema = new Schema(
       type: Date,
       default: null,
     },
+    lastActivity: {
+      type: Date,
+      default: null,
+    },
   },
   {
     collection: "users",
