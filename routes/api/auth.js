@@ -31,22 +31,26 @@ router.post("/", (req, res) => {
       if (!isMatch)
         return res.status(400).json({ msg: "Credenciales no validas" });
 
-      jwt.sign(
-        { id: user.id },
-        config.get("jwtSecret"),
-        { expiresIn: 6600 },
-        (err, token) => {
-          if (err) throw err;
-          res.json({
-            token,
-            user: {
-              id: user.id,
-              email: user.email,
-              role: user.role,
-            },
-          });
-        }
-      );
+      // Actualizar última conexión
+      user.lastLogin = new Date();
+      user.save().then(() => {
+        jwt.sign(
+          { id: user.id },
+          config.get("jwtSecret"),
+          { expiresIn: 6600 },
+          (err, token) => {
+            if (err) throw err;
+            res.json({
+              token,
+              user: {
+                id: user.id,
+                email: user.email,
+                role: user.role,
+              },
+            });
+          }
+        );
+      });
     });
   });
 });

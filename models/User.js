@@ -40,6 +40,10 @@ const UserSchema = new Schema(
       type: Date,
       default: Date.now,
     },
+    lastLogin: {
+      type: Date,
+      default: null,
+    },
   },
   {
     collection: "users",
