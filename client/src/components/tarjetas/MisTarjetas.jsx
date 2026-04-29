@@ -7,6 +7,7 @@ import { Card, CardBody, Row, Col, Table, Button, Container } from "reactstrap";
 import moment from "moment";
 import { Link, Redirect } from "react-router-dom";
 import MaterialTable from "material-table";
+import { generarReportePDF } from "./generarReporte";
 
 export class MisTarjetas extends Component {
   componentDidMount() {
@@ -97,6 +98,19 @@ export class MisTarjetas extends Component {
                       </div>
                       <div className="ml-auto d-sm-flex no-block align-items-center mb-3">
                         <Col>
+                          {this.props.user &&
+                            this.props.user.role === "Admin" && (
+                              <Button
+                                color="primary"
+                                className="btn mr-2"
+                                onClick={() =>
+                                  generarReportePDF(sortedTarjetas)
+                                }
+                                disabled={!sortedTarjetas.length}
+                              >
+                                Generar reporte PDF
+                              </Button>
+                            )}
                           <Link to="/agregartarjeta">
                             <Button color="success" className="btn">
                               Agregar Tarjeta
