@@ -13,6 +13,30 @@ const BRAND = [33, 47, 90];
 const HEADER_FILL = [52, 58, 64];
 const SOFT = [240, 242, 245];
 
+// Equipos incluidos en el reporte con su fecha de inicio (inclusivo)
+const EQUIPOS_FILTRO = [
+  { equipo: "Planta de Mezclado", desde: "2022-04-01" },
+  { equipo: "Calandrado y Ss Aux Asociados", desde: "2022-04-01" },
+  { equipo: "Alimentación y Extrusión y Ss Aux Asociados", desde: "2022-04-01" },
+  { equipo: "Cortadora WT", desde: "2026-03-01" },
+  { equipo: "Cortadora Euromac", desde: "2026-03-01" },
+];
+
+function filtrarTarjetas(tarjetas) {
+  const desdePorEquipo = EQUIPOS_FILTRO.reduce((acc, { equipo, desde }) => {
+    acc[equipo] = moment(desde, "YYYY-MM-DD").startOf("day");
+    return acc;
+  }, {});
+
+  return tarjetas.filter((t) => {
+    const desde = desdePorEquipo[t.equipo];
+    if (!desde) return false;
+    const fecha = t.fecha ? moment(t.fecha) : null;
+    if (!fecha || !fecha.isValid()) return false;
+    return fecha.isSameOrAfter(desde);
+  });
+}
+
 function emptyColorCounts() {
   return COLORS.reduce((acc, c) => ({ ...acc, [c]: 0 }), {});
 }
@@ -78,7 +102,7 @@ function buildSummary(tarjetas) {
 
 function drawHeader(doc, pageWidth, generatedAt) {
   doc.setFillColor(...BRAND);
-  doc.rect(0, 0, pageWidth, 70, "F");
+  doc.rect(0, 0, pageWidth, 90, "F");
 
   doc.setTextColor(255, 255, 255);
   doc.setFont(undefined, "bold");
@@ -90,6 +114,14 @@ function drawHeader(doc, pageWidth, generatedAt) {
   doc.setFont(undefined, "normal");
   doc.setFontSize(10);
   doc.text(`Generado: ${generatedAt}`, pageWidth / 2, 52, { align: "center" });
+
+  doc.setFontSize(8);
+  doc.text(
+    "Mezclado/Calandrado/Alimentación y Extrusión: desde Abr/2022  |  Cortadora WT/Euromac: desde Mar/2026",
+    pageWidth / 2,
+    72,
+    { align: "center" }
+  );
 
   doc.setTextColor(0, 0, 0);
 }
@@ -106,7 +138,8 @@ function sectionTitle(doc, text, y) {
 }
 
 export function generarReportePDF(tarjetas) {
-  const { totals, porEquipo } = buildSummary(tarjetas);
+  const tarjetasFiltradas = filtrarTarjetas(tarjetas);
+  const { totals, porEquipo } = buildSummary(tarjetasFiltradas);
   const doc = new jsPDF({ unit: "pt", format: "a4" });
   const pageWidth = doc.internal.pageSize.getWidth();
   const pageHeight = doc.internal.pageSize.getHeight();
@@ -115,7 +148,7 @@ export function generarReportePDF(tarjetas) {
   drawHeader(doc, pageWidth, generatedAt);
 
   // ---- Section: Totales generales ----
-  let cursorY = 100;
+  let cursorY = 120;
   sectionTitle(doc, "Totales generales", cursorY);
   cursorY += 14;
 
@@ -193,9 +226,14 @@ export function generarReportePDF(tarjetas) {
   sectionTitle(doc, "Por equipo autónomo", cursorY);
   cursorY += 14;
 
-  const equipoRows = Object.entries(porEquipo)
-    .sort((a, b) => b[1].total - a[1].total)
-    .map(([equipo, s]) => [
+  const equipoRows = EQUIPOS_FILTRO.map(({ equipo }) => {
+    const s = porEquipo[equipo] || {
+      total: 0,
+      abiertas: 0,
+      cerradas: 0,
+      porColor: emptyColorCounts(),
+    };
+    return [
       equipo,
       s.total,
       s.abiertas,
@@ -204,7 +242,8 @@ export function generarReportePDF(tarjetas) {
       s.porColor.Amarilla,
       s.porColor.Azul,
       s.porColor.Verde,
-    ]);
+    ];
+  });
 
   doc.autoTable({
     startY: cursorY,
