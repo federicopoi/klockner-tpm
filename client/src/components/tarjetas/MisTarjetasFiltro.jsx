@@ -19,6 +19,10 @@ import {
 } from "reactstrap";
 import Select from "react-select";
 import PresetModal from "./PresetModal";
+import {
+  generarReporteEquipoPDF,
+  EQUIPOS_REPORTE,
+} from "./generarReporteEquipo";
 
 const options = [
   { value: "numero", label: "N°" },
@@ -245,6 +249,25 @@ class MisTarjetasFiltro extends Component {
                           Exportar excel
                         </button>
                       </div>
+                    </div>
+                  </div>
+                  <div className="mb-3">
+                    <h6 className="mb-2">
+                      Imprimir tarjetas abiertas por equipo
+                    </h6>
+                    <div className="d-flex flex-wrap">
+                      {EQUIPOS_REPORTE.map(({ equipo, label }) => (
+                        <button
+                          key={equipo}
+                          className="btn btn-outline-primary btn-sm mr-2 mb-2"
+                          onClick={() =>
+                            generarReporteEquipoPDF(tarjetas, equipo, label)
+                          }
+                          disabled={!tarjetas || !tarjetas.length}
+                        >
+                          {label}
+                        </button>
+                      ))}
                     </div>
                   </div>
                 </Col>
