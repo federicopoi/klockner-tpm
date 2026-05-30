@@ -9,6 +9,8 @@ import {
   EDITAR_TARJETA,
   AGREGAR_PLANIFICACION,
   AGREGAR_IMAGEN,
+  AGREGAR_IMAGEN_ANTES,
+  AGREGAR_IMAGEN_DESPUES,
 } from "../actions/types";
 const initState = {
   tarjetas: [],
@@ -62,6 +64,8 @@ export default function (state = initState, action) {
         tarjetas: [action.payload],
       };
     case AGREGAR_IMAGEN:
+    case AGREGAR_IMAGEN_ANTES:
+    case AGREGAR_IMAGEN_DESPUES:
       return {
         ...state,
         tarjetas: [action.payload],

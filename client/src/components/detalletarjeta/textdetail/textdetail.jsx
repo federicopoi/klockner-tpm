@@ -9,6 +9,8 @@ import { borrarTarjeta } from "../../../store/actions/tarjetaActions";
 import { borrarKaizen } from "../../../store/actions/kaizenActions";
 import PlanificacionModal from "../planificaciondetalle/PlanificacionModal";
 import UploadImageModal from "../imagendetalle/UploadImageModal";
+import UploadImageAntesModal from "../imagendetalle/UploadImageAntesModal";
+import UploadImageDespuesModal from "../imagendetalle/UploadImageDespuesModal";
 import UploadImageFrontModal from "../imagendetallekaizen/UploadImageFrontModal";
 import UploadImageBackModal from "../imagendetallekaizen/UploadImageBackModal";
 import { Button, Row, Col } from "reactstrap";
@@ -59,6 +61,18 @@ export class TextDetail extends Component {
       tarjetas
         .filter(({ _id }) => _id === link_id)
         .map(({ imagenUrl }) => imagenUrl);
+
+    const imagenAntes =
+      tarjetas &&
+      tarjetas
+        .filter(({ _id }) => _id === link_id)
+        .map(({ imagenAntesUrl }) => imagenAntesUrl);
+
+    const imagenDespues =
+      tarjetas &&
+      tarjetas
+        .filter(({ _id }) => _id === link_id)
+        .map(({ imagenDespuesUrl }) => imagenDespuesUrl);
 
     const imagenkaizenfront =
       tarjetaskaizen &&
@@ -175,6 +189,24 @@ export class TextDetail extends Component {
                                           button={false}
                                           _id={link_id}
                                         ></UploadImageModal>
+                                      </Col>
+                                    )}
+                                    {imagenAntes[0] === undefined && (
+                                      <Col>
+                                        <UploadImageAntesModal
+                                          p={true}
+                                          button={false}
+                                          _id={link_id}
+                                        ></UploadImageAntesModal>
+                                      </Col>
+                                    )}
+                                    {imagenDespues[0] === undefined && (
+                                      <Col>
+                                        <UploadImageDespuesModal
+                                          p={true}
+                                          button={false}
+                                          _id={link_id}
+                                        ></UploadImageDespuesModal>
                                       </Col>
                                     )}
 

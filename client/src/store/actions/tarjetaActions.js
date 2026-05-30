@@ -9,6 +9,8 @@ import {
   EDITAR_TARJETA,
   AGREGAR_PLANIFICACION,
   AGREGAR_IMAGEN,
+  AGREGAR_IMAGEN_ANTES,
+  AGREGAR_IMAGEN_DESPUES,
 } from "./types";
 
 import { returnErrors } from "./errorActions";
@@ -188,6 +190,34 @@ export const agregarImagen = (imagen) => (dispatch) => {
     .then((res) =>
       dispatch({
         type: AGREGAR_IMAGEN,
+        payload: res.data,
+      })
+    )
+    .catch((err) => {
+      dispatch(returnErrors(err.response.data, err.response.status));
+    });
+};
+
+export const agregarImagenAntes = (imagen) => (dispatch) => {
+  axios
+    .post("/api/tarjetas/agregarimagenantes", imagen)
+    .then((res) =>
+      dispatch({
+        type: AGREGAR_IMAGEN_ANTES,
+        payload: res.data,
+      })
+    )
+    .catch((err) => {
+      dispatch(returnErrors(err.response.data, err.response.status));
+    });
+};
+
+export const agregarImagenDespues = (imagen) => (dispatch) => {
+  axios
+    .post("/api/tarjetas/agregarimagendespues", imagen)
+    .then((res) =>
+      dispatch({
+        type: AGREGAR_IMAGEN_DESPUES,
         payload: res.data,
       })
     )

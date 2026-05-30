@@ -437,4 +437,34 @@ router.post("/agregarimagen", (req, res) => {
   });
 });
 
+// @route POST api/tarjetas/agregarimagenantes
+// @desc Agregar imagen antes
+// @access Public
+router.post("/agregarimagenantes", (req, res) => {
+  const { _id, imagenUrl } = req.body;
+
+  Tarjeta.findOne({ _id }).exec((err, tarjeta) => {
+    if (err) console.log("Update Tarjeta antes  ", err);
+
+    tarjeta.imagenAntesUrl = imagenUrl;
+    tarjeta.save();
+    res.json(tarjeta);
+  });
+});
+
+// @route POST api/tarjetas/agregarimagendespues
+// @desc Agregar imagen despues
+// @access Public
+router.post("/agregarimagendespues", (req, res) => {
+  const { _id, imagenUrl } = req.body;
+
+  Tarjeta.findOne({ _id }).exec((err, tarjeta) => {
+    if (err) console.log("Update Tarjeta despues  ", err);
+
+    tarjeta.imagenDespuesUrl = imagenUrl;
+    tarjeta.save();
+    res.json(tarjeta);
+  });
+});
+
 module.exports = router;

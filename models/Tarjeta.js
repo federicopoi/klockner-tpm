@@ -57,12 +57,15 @@ const TarjetaSchema = new Schema(
     imagenUrl: {
       type: String,
     },
+    imagenAntesUrl: {
+      type: String,
+    },
+    imagenDespuesUrl: {
+      type: String,
+    },
     // Solo en Tarjeta amarilla
     sustoExperimentado: {
       type: Boolean,
-    },
-    imagenUrl: {
-      type: String,
     },
     sustoObservado: {
       type: Boolean,

@@ -12,6 +12,8 @@ import {
 } from ".";
 import ImagenDetalleFront from "./imagendetallekaizen/ImagenDetalleFront";
 import ImagenDetalleBack from "./imagendetallekaizen/ImagenDetalleBack";
+import ImagenDetalleAntes from "./imagendetalle/ImagenDetalleAntes";
+import ImagenDetalleDespues from "./imagendetalle/ImagenDetalleDespues";
 
 class LayoutDetalle extends Component {
   componentDidMount() {
@@ -47,6 +49,18 @@ class LayoutDetalle extends Component {
       tarjetas
         .filter(({ _id }) => _id === link_id)
         .map(({ imagenUrl }) => imagenUrl);
+
+    const imagenAntes =
+      tarjetas &&
+      tarjetas
+        .filter(({ _id }) => _id === link_id)
+        .map(({ imagenAntesUrl }) => imagenAntesUrl);
+
+    const imagenDespues =
+      tarjetas &&
+      tarjetas
+        .filter(({ _id }) => _id === link_id)
+        .map(({ imagenDespuesUrl }) => imagenDespuesUrl);
 
     const imagenFront =
       tarjetaskaizen &&
@@ -128,6 +142,26 @@ class LayoutDetalle extends Component {
                         </Col>
                       </Row>
                     )}
+                    {imagenAntes[0] && (
+                      <Row>
+                        <Col>
+                          <ImagenDetalleAntes
+                            tarjetas={tarjetas}
+                            link_id={link_id}
+                          ></ImagenDetalleAntes>
+                        </Col>
+                      </Row>
+                    )}
+                    {imagenDespues[0] && (
+                      <Row>
+                        <Col>
+                          <ImagenDetalleDespues
+                            tarjetas={tarjetas}
+                            link_id={link_id}
+                          ></ImagenDetalleDespues>
+                        </Col>
+                      </Row>
+                    )}
                   </div>
                 )}
               {estadoTarjeta[0] !== null &&
@@ -170,6 +204,26 @@ class LayoutDetalle extends Component {
                             tarjetas={tarjetas}
                             link_id={link_id}
                           ></ImagenDetalle>
+                        </Col>
+                      </Row>
+                    )}
+                    {imagenAntes[0] && (
+                      <Row>
+                        <Col>
+                          <ImagenDetalleAntes
+                            tarjetas={tarjetas}
+                            link_id={link_id}
+                          ></ImagenDetalleAntes>
+                        </Col>
+                      </Row>
+                    )}
+                    {imagenDespues[0] && (
+                      <Row>
+                        <Col>
+                          <ImagenDetalleDespues
+                            tarjetas={tarjetas}
+                            link_id={link_id}
+                          ></ImagenDetalleDespues>
                         </Col>
                       </Row>
                     )}
