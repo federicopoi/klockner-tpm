@@ -8,7 +8,6 @@ import { connect } from "react-redux";
 import { borrarTarjeta } from "../../../store/actions/tarjetaActions";
 import { borrarKaizen } from "../../../store/actions/kaizenActions";
 import PlanificacionModal from "../planificaciondetalle/PlanificacionModal";
-import UploadImageModal from "../imagendetalle/UploadImageModal";
 import UploadImageAntesModal from "../imagendetalle/UploadImageAntesModal";
 import UploadImageDespuesModal from "../imagendetalle/UploadImageDespuesModal";
 import UploadImageFrontModal from "../imagendetallekaizen/UploadImageFrontModal";
@@ -55,12 +54,6 @@ export class TextDetail extends Component {
       tarjetas
         .filter(({ _id }) => _id === link_id)
         .map(({ planificacion }) => planificacion);
-
-    const imagen =
-      tarjetas &&
-      tarjetas
-        .filter(({ _id }) => _id === link_id)
-        .map(({ imagenUrl }) => imagenUrl);
 
     const imagenAntes =
       tarjetas &&
@@ -182,15 +175,6 @@ export class TextDetail extends Component {
                                         Mostrar QR
                                       </QRModal>
                                     </Col>
-                                    {imagen[0] === undefined && (
-                                      <Col>
-                                        <UploadImageModal
-                                          p={true}
-                                          button={false}
-                                          _id={link_id}
-                                        ></UploadImageModal>
-                                      </Col>
-                                    )}
                                     {imagenAntes[0] === undefined && (
                                       <Col>
                                         <UploadImageAntesModal

@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Card, CardBody, Media, Row, Col } from "reactstrap";
+import UploadImageAntesModal from "./UploadImageAntesModal";
 
 export class ImagenDetalleAntes extends Component {
   render() {
@@ -25,6 +26,16 @@ export class ImagenDetalleAntes extends Component {
                           <div className="d-flex align-items-center">
                             <div>
                               <h3>Imagen del antes</h3>
+                            </div>
+
+                            <div className="ml-auto d-flex no-block align-items-center">
+                              <div className="dl">
+                                <UploadImageAntesModal
+                                  p={true}
+                                  button={false}
+                                  _id={link_id}
+                                ></UploadImageAntesModal>
+                              </div>
                             </div>
                           </div>
                         </Col>
