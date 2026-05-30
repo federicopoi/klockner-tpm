@@ -37,7 +37,7 @@ const UploadImageDespuesModal = (props) => {
     <div>
       {props.button && (
         <Button onClick={toggle} color="secondary" className="my-3">
-          Adjuntar Imagen del despues
+          {props.replace ? "Cambiar Imagen" : "Adjuntar Imagen del despues"}
         </Button>
       )}
       {props.p && (
@@ -47,11 +47,13 @@ const UploadImageDespuesModal = (props) => {
           style={{ cursor: "pointer" }}
           className="my-3"
         >
-          Adjuntar Imagen del despues
+          {props.replace ? "Cambiar Imagen" : "Adjuntar Imagen del despues"}
         </p>
       )}
       <Modal isOpen={modal} toggle={toggle}>
-        <ModalHeader toggle={toggle}>Adjuntar Imagen del despues</ModalHeader>
+        <ModalHeader toggle={toggle}>
+          {props.replace ? "Cambiar Imagen del despues" : "Adjuntar Imagen del despues"}
+        </ModalHeader>
 
         <div className="mt-3 mb-3 ml-3 mr-3">
           <input

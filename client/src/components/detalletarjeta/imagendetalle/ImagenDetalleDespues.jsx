@@ -33,6 +33,7 @@ export class ImagenDetalleDespues extends Component {
                                 <UploadImageDespuesModal
                                   p={true}
                                   button={false}
+                                  replace={true}
                                   _id={link_id}
                                 ></UploadImageDespuesModal>
                               </div>

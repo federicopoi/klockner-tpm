@@ -33,6 +33,7 @@ export class ImagenDetalleAntes extends Component {
                                 <UploadImageAntesModal
                                   p={true}
                                   button={false}
+                                  replace={true}
                                   _id={link_id}
                                 ></UploadImageAntesModal>
                               </div>
