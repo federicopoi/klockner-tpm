@@ -185,7 +185,7 @@ export function generarReportePDF(tarjetas) {
   const leftFinalY = doc.lastAutoTable.finalY;
 
   const colorBody = COLORS.map((c) => [
-    c,
+    `${c} Total`,
     totals.porColor[c],
     totals.total
       ? `${((totals.porColor[c] / totals.total) * 100).toFixed(1)}%`
@@ -194,7 +194,7 @@ export function generarReportePDF(tarjetas) {
 
   doc.autoTable({
     startY: cursorY,
-    head: [["Color", "Cantidad", "%"]],
+    head: [["Color", "Cantidad Total (Abiertas + Cerradas)", "% del Total de Tarjetas"]],
     body: colorBody,
     theme: "grid",
     headStyles: {
@@ -214,7 +214,8 @@ export function generarReportePDF(tarjetas) {
     tableWidth: colWidth,
     didParseCell: (data) => {
       if (data.section === "body" && data.column.index === 0) {
-        const rgb = COLOR_RGB[data.cell.raw];
+        const colorName = String(data.cell.raw).replace(/ Total$/, "");
+        const rgb = COLOR_RGB[colorName];
         if (rgb) data.cell.styles.textColor = rgb;
       }
     },
