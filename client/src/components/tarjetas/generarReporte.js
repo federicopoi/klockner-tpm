@@ -152,7 +152,7 @@ export function generarReportePDF(tarjetas) {
   sectionTitle(doc, "Totales generales", cursorY);
   cursorY += 14;
 
-  const colWidth = (pageWidth - 80 - 20) / 2; // 40 left, 40 right, 20 gap
+  const fullWidth = pageWidth - 80; // 40 left + 40 right
 
   const totalesRows = [
     ["Total de tarjetas", totals.total],
@@ -172,17 +172,17 @@ export function generarReportePDF(tarjetas) {
       textColor: 255,
       fontStyle: "bold",
       fontSize: 10,
+      overflow: "visible",
     },
     bodyStyles: { fontSize: 10 },
     alternateRowStyles: { fillColor: SOFT },
     columnStyles: {
-      0: { cellWidth: colWidth * 0.65 },
-      1: { cellWidth: colWidth * 0.35, halign: "right", fontStyle: "bold" },
+      0: { cellWidth: fullWidth * 0.7 },
+      1: { cellWidth: fullWidth * 0.3, halign: "right", fontStyle: "bold" },
     },
-    margin: { left: 40 },
-    tableWidth: colWidth,
+    margin: { left: 40, right: 40 },
+    tableWidth: fullWidth,
   });
-  const leftFinalY = doc.lastAutoTable.finalY;
 
   const colorBody = COLORS.map((c) => [
     `${c} Total`,
@@ -193,8 +193,10 @@ export function generarReportePDF(tarjetas) {
   ]);
 
   doc.autoTable({
-    startY: cursorY,
-    head: [["Color", "Cantidad Total (Abiertas + Cerradas)", "% del Total de Tarjetas"]],
+    startY: doc.lastAutoTable.finalY + 12,
+    head: [
+      ["Color", "Cantidad Total (Abiertas + Cerradas)", "% del Total de Tarjetas"],
+    ],
     body: colorBody,
     theme: "grid",
     headStyles: {
@@ -202,16 +204,17 @@ export function generarReportePDF(tarjetas) {
       textColor: 255,
       fontStyle: "bold",
       fontSize: 10,
+      overflow: "visible",
     },
     bodyStyles: { fontSize: 10 },
     alternateRowStyles: { fillColor: SOFT },
     columnStyles: {
-      0: { cellWidth: colWidth * 0.45, fontStyle: "bold" },
-      1: { cellWidth: colWidth * 0.27, halign: "right" },
-      2: { cellWidth: colWidth * 0.28, halign: "right" },
+      0: { cellWidth: fullWidth * 0.34, fontStyle: "bold" },
+      1: { cellWidth: fullWidth * 0.33, halign: "right" },
+      2: { cellWidth: fullWidth * 0.33, halign: "right" },
     },
-    margin: { left: 40 + colWidth + 20 },
-    tableWidth: colWidth,
+    margin: { left: 40, right: 40 },
+    tableWidth: fullWidth,
     didParseCell: (data) => {
       if (data.section === "body" && data.column.index === 0) {
         const colorName = String(data.cell.raw).replace(/ Total$/, "");
@@ -220,10 +223,9 @@ export function generarReportePDF(tarjetas) {
       }
     },
   });
-  const rightFinalY = doc.lastAutoTable.finalY;
 
   // ---- Section: Por equipo autónomo ----
-  cursorY = Math.max(leftFinalY, rightFinalY) + 28;
+  cursorY = doc.lastAutoTable.finalY + 28;
   sectionTitle(doc, "Por equipo autónomo", cursorY);
   cursorY += 14;
 
@@ -274,31 +276,33 @@ export function generarReportePDF(tarjetas) {
       ],
     ],
     theme: "grid",
+    styles: { overflow: "visible" },
     headStyles: {
       fillColor: HEADER_FILL,
       textColor: 255,
       fontStyle: "bold",
-      fontSize: 9,
+      fontSize: 8,
       halign: "center",
+      overflow: "visible",
     },
     footStyles: {
       fillColor: BRAND,
       textColor: 255,
       fontStyle: "bold",
-      fontSize: 9,
+      fontSize: 8,
       halign: "center",
     },
-    bodyStyles: { fontSize: 9 },
+    bodyStyles: { fontSize: 8 },
     alternateRowStyles: { fillColor: SOFT },
     columnStyles: {
-      0: { cellWidth: 170, fontStyle: "bold" },
-      1: { halign: "center" },
-      2: { halign: "center" },
-      3: { halign: "center" },
-      4: { halign: "center", textColor: COLOR_RGB.Roja, fontStyle: "bold" },
-      5: { halign: "center", textColor: COLOR_RGB.Amarilla, fontStyle: "bold" },
-      6: { halign: "center", textColor: COLOR_RGB.Azul, fontStyle: "bold" },
-      7: { halign: "center", textColor: COLOR_RGB.Verde, fontStyle: "bold" },
+      0: { cellWidth: 150, fontStyle: "bold", overflow: "linebreak" },
+      1: { cellWidth: 38, halign: "center" },
+      2: { cellWidth: 46, halign: "center" },
+      3: { cellWidth: 46, halign: "center" },
+      4: { cellWidth: 47, halign: "center", textColor: COLOR_RGB.Roja, fontStyle: "bold" },
+      5: { cellWidth: 60, halign: "center", textColor: COLOR_RGB.Amarilla, fontStyle: "bold" },
+      6: { cellWidth: 47, halign: "center", textColor: COLOR_RGB.Azul, fontStyle: "bold" },
+      7: { cellWidth: 49, halign: "center", textColor: COLOR_RGB.Verde, fontStyle: "bold" },
     },
     margin: { left: 40, right: 40 },
   });
