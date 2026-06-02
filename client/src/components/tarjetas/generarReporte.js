@@ -203,6 +203,7 @@ export function generarReportePDF(tarjetas) {
       textColor: 255,
       fontStyle: "bold",
       fontSize: 9,
+      halign: "center",
       overflow: "linebreak",
     },
     bodyStyles: { fontSize: 10 },
@@ -215,6 +216,9 @@ export function generarReportePDF(tarjetas) {
     margin: { left: 40, right: 40 },
     tableWidth: fullWidth,
     didParseCell: (data) => {
+      if (data.section === "head" && data.column.index === 0) {
+        data.cell.styles.halign = "left";
+      }
       if (data.section === "body" && data.column.index === 0) {
         const colorName = String(data.cell.raw).replace(/ Total$/, "");
         const rgb = COLOR_RGB[colorName];
@@ -279,7 +283,7 @@ export function generarReportePDF(tarjetas) {
       fillColor: HEADER_FILL,
       textColor: 255,
       fontStyle: "bold",
-      fontSize: 8,
+      fontSize: 7,
       halign: "center",
       overflow: "linebreak",
     },
@@ -293,14 +297,14 @@ export function generarReportePDF(tarjetas) {
     bodyStyles: { fontSize: 8 },
     alternateRowStyles: { fillColor: SOFT },
     columnStyles: {
-      0: { cellWidth: 150, fontStyle: "bold", overflow: "linebreak" },
+      0: { cellWidth: 138, fontStyle: "bold", overflow: "linebreak" },
       1: { cellWidth: 38, halign: "center" },
-      2: { cellWidth: 46, halign: "center" },
-      3: { cellWidth: 46, halign: "center" },
-      4: { cellWidth: 47, halign: "center", textColor: COLOR_RGB.Roja, fontStyle: "bold" },
-      5: { cellWidth: 60, halign: "center", textColor: COLOR_RGB.Amarilla, fontStyle: "bold" },
-      6: { cellWidth: 47, halign: "center", textColor: COLOR_RGB.Azul, fontStyle: "bold" },
-      7: { cellWidth: 49, halign: "center", textColor: COLOR_RGB.Verde, fontStyle: "bold" },
+      2: { cellWidth: 48, halign: "center" },
+      3: { cellWidth: 48, halign: "center" },
+      4: { cellWidth: 48, halign: "center", textColor: COLOR_RGB.Roja, fontStyle: "bold" },
+      5: { cellWidth: 62, halign: "center", textColor: COLOR_RGB.Amarilla, fontStyle: "bold" },
+      6: { cellWidth: 48, halign: "center", textColor: COLOR_RGB.Azul, fontStyle: "bold" },
+      7: { cellWidth: 48, halign: "center", textColor: COLOR_RGB.Verde, fontStyle: "bold" },
     },
     margin: { left: 40, right: 40 },
   });
