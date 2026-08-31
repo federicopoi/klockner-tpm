@@ -92,7 +92,7 @@ async function main() {
         `<p><strong>Total:</strong> ${summary.totals.total} &nbsp; `,
         `<strong>Abiertas:</strong> ${summary.totals.abiertas} &nbsp; `,
         `<strong>Cerradas:</strong> ${summary.totals.cerradas}</p>`,
-        "<p>Saludos,<br>Klockner TPM</p>",
+        "<p>EFU SYSTEM</p>",
       ].join(""),
       attachment: { filename, content: buffer },
     });
