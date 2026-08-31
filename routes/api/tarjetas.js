@@ -189,6 +189,7 @@ router.post("/cerrar", (req, res) => {
     tarjeta.tareaRealizada = tareaRealizada;
     tarjeta.materialUtilizado = materialUtilizado;
     tarjeta.estado = "Cerrada";
+    tarjeta.fechaCierre = new Date();
     tarjeta.riesgoFinal = riesgoFinal;
     tarjeta.convertida = convertida;
     tarjeta.tipoAccion = tipoAccion;
@@ -239,6 +240,7 @@ router.post("/cerrar/amarilla", (req, res) => {
     tarjeta.tareaRealizada = tareaRealizada;
     tarjeta.accionesComplementarias = accionesComplementarias;
     tarjeta.estado = "Cerrada";
+    tarjeta.fechaCierre = new Date();
     tarjeta.convertida = convertida;
     tarjeta.tipoAccion = tipoAccion;
     tarjeta.save();

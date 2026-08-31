@@ -3,6 +3,7 @@ import CanvasJSReact from "../canvasjs.react";
 import TableModalAutonomia from "../tablemodalautonomia/TableModalAutonomia";
 import { Row, Col, Card, CardBody, Label, Input } from "reactstrap";
 import moment from "moment";
+import { getMesCierre } from "../../../utils/tarjetaDates";
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 var CanvasJS = CanvasJSReact.CanvasJS;
 
@@ -37,7 +38,8 @@ export class GraficoAutonomia extends Component {
 
     const fechasTarjetasFiltroCerradas = tarjetas
       .filter(({ estado }) => estado === "Cerrada")
-      .map(({ finReparacion }) => finReparacion.substr(0, 7));
+      .map(getMesCierre)
+      .filter(Boolean);
 
     // Remove duplicates
     let fechasTarjetasConvertidas1 = new Set(fechasTarjetasConvertidas);
@@ -132,7 +134,8 @@ export class GraficoAutonomia extends Component {
 
     const fechasTarjetasFiltroCerradas = tarjetas
       .filter(({ estado }) => estado === "Cerrada")
-      .map(({ finReparacion }) => finReparacion.substr(0, 7));
+      .map(getMesCierre)
+      .filter(Boolean);
 
     // Remove duplicates
     let fechasTarjetasConvertidas1 = new Set(fechasTarjetasConvertidas);
@@ -172,10 +175,10 @@ export class GraficoAutonomia extends Component {
     // Numero total de tarjetas de cada mes (no acumulado)
     let array1 = fechastarjetasUnicasRangoCut.sort().map((item, index) => {
       return newFilter.filter(
-        ({ estado, finReparacion, color }) =>
-          color === "Azul" &&
-          estado === "Cerrada" &&
-          finReparacion.slice(0, 7) === item.slice(0, 7)
+        (tarjeta) =>
+          tarjeta.color === "Azul" &&
+          tarjeta.estado === "Cerrada" &&
+          getMesCierre(tarjeta) === item.slice(0, 7)
       ).length;
     });
 
@@ -187,10 +190,10 @@ export class GraficoAutonomia extends Component {
     // Numero total de tarjetas de cada mes (no acumulado)
     let array2 = fechastarjetasUnicasRangoCut.sort().map((item, index) => {
       return newFilter.filter(
-        ({ estado, finReparacion, convertida }) =>
-          convertida === true &&
-          estado === "Cerrada" &&
-          finReparacion.slice(0, 7) === item.slice(0, 7)
+        (tarjeta) =>
+          tarjeta.convertida === true &&
+          tarjeta.estado === "Cerrada" &&
+          getMesCierre(tarjeta) === item.slice(0, 7)
       ).length;
     });
 
@@ -202,9 +205,10 @@ export class GraficoAutonomia extends Component {
     // Numero total de tarjetas de cada mes (no acumulado)
     let array3 = fechastarjetasUnicasRangoCut.sort().map((item, index) => {
       return newFilter.filter(
-        ({ estado, finReparacion, color }) =>
-          estado === "Cerrada" && finReparacion.slice(0, 7) === item.slice(0, 7) &&
-          ["Azul", "Roja", "Verde", "Amarilla"].includes(color)
+        (tarjeta) =>
+          tarjeta.estado === "Cerrada" &&
+          getMesCierre(tarjeta) === item.slice(0, 7) &&
+          ["Azul", "Roja", "Verde", "Amarilla"].includes(tarjeta.color)
       ).length;
     });
 

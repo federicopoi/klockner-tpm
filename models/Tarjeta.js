@@ -88,6 +88,9 @@ const TarjetaSchema = new Schema(
     finReparacion: {
       type: String,
     },
+    fechaCierre: {
+      type: Date,
+    },
     responsable: {
       type: String,
     },

@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import CanvasJSReact from "../canvasjs.react";
 import moment, { months } from "moment";
 import TableModal from "../tablemodal/TableModal";
+import { getMesCierre } from "../../../utils/tarjetaDates";
 import { Col, Row, Card, CardBody, Table, Input, Button } from "reactstrap";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
@@ -51,7 +52,8 @@ export class GraficoAmarillas extends Component {
       .filter(
         ({ estado, color }) => estado === "Cerrada" && color === "Amarilla"
       )
-      .map(({ finReparacion }) => finReparacion.substr(0, 7));
+      .map(getMesCierre)
+      .filter(Boolean);
 
     // Borro todos los meses repetidos
     let fechasTarjetasAmarillas1 = new Set(fechasTarjetasAmarillas);
@@ -136,10 +138,10 @@ export class GraficoAmarillas extends Component {
       .sort()
       .map((item, index) => {
         return tarjetas.filter(
-          ({ estado, finReparacion, color }) =>
-            color === "Amarilla" &&
-            estado === "Cerrada" &&
-            finReparacion.slice(0, 7) === item.slice(0, 7)
+          (tarjeta) =>
+            tarjeta.color === "Amarilla" &&
+            tarjeta.estado === "Cerrada" &&
+            getMesCierre(tarjeta) === item.slice(0, 7)
         ).length;
       });
 
@@ -169,10 +171,10 @@ export class GraficoAmarillas extends Component {
       .sort()
       .map((item, index) => {
         return tarjetas.filter(
-          ({ estado, finReparacion, color }) =>
-            color === "Amarilla" &&
-            estado === "Cerrada" &&
-            finReparacion.slice(0, 7) === item.slice(0, 7)
+          (tarjeta) =>
+            tarjeta.color === "Amarilla" &&
+            tarjeta.estado === "Cerrada" &&
+            getMesCierre(tarjeta) === item.slice(0, 7)
         ).length;
       });
 

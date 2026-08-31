@@ -3,6 +3,7 @@ import CanvasJSReact from "../canvasjs.react";
 import { Label, Input } from "reactstrap";
 import { Row, Col, Card, CardBody, Table } from "reactstrap";
 import moment from "moment";
+import { getMesCierre } from "../../../utils/tarjetaDates";
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 var CanvasJS = CanvasJSReact.CanvasJS;
 export class GraficoRiesgo extends Component {
@@ -88,7 +89,8 @@ export class GraficoRiesgo extends Component {
     // Filtro todos los meses en el que hay tarjetas cerradas Filtro
     const fechasTarjetasFiltroCerradas = tarjetas
       .filter(({ estado, color, equipo }) => estado === "Cerrada")
-      .map(({ finReparacion, color, numero }) => finReparacion.substr(0, 7));
+      .map(getMesCierre)
+      .filter(Boolean);
 
     // Borro todos los meses repetidos
     let fechasTarjetasFiltro1 = new Set(fechasTarjetasFiltro);

@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import CanvasJSReact from "../canvasjs.react";
 import moment from "moment";
 import TableModal from "../tablemodal/TableModal";
+import { getMesCierre } from "../../../utils/tarjetaDates";
 import { Row, Col, Card, CardBody, Input } from "reactstrap";
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 var CanvasJS = CanvasJSReact.CanvasJS;
@@ -48,7 +49,8 @@ export class GraficoVerdes extends Component {
     // Filtro todos los meses en el que hay tarjetas cerradas Verdes
     const fechasTarjetasVerdesCerradas = tarjetas
       .filter(({ estado, color }) => estado === "Cerrada" && color === "Verde")
-      .map(({ finReparacion }) => finReparacion.substr(0, 7));
+      .map(getMesCierre)
+      .filter(Boolean);
 
     // Borro todos los meses repetidos
     let fechasTarjetasVerdes1 = new Set(fechasTarjetasVerdes);
@@ -131,10 +133,10 @@ export class GraficoVerdes extends Component {
       .sort()
       .map((item, index) => {
         return tarjetas.filter(
-          ({ estado, finReparacion, color }) =>
-            color === "Verde" &&
-            estado === "Cerrada" &&
-            finReparacion.slice(0, 7) === item.slice(0, 7)
+          (tarjeta) =>
+            tarjeta.color === "Verde" &&
+            tarjeta.estado === "Cerrada" &&
+            getMesCierre(tarjeta) === item.slice(0, 7)
         ).length;
       });
 
@@ -164,10 +166,10 @@ export class GraficoVerdes extends Component {
       .sort()
       .map((item, index) => {
         return tarjetas.filter(
-          ({ estado, finReparacion, color }) =>
-            color === "Verde" &&
-            estado === "Cerrada" &&
-            finReparacion.slice(0, 7) === item.slice(0, 7)
+          (tarjeta) =>
+            tarjeta.color === "Verde" &&
+            tarjeta.estado === "Cerrada" &&
+            getMesCierre(tarjeta) === item.slice(0, 7)
         ).length;
       });
 

@@ -85,13 +85,23 @@ function buildSummary(tarjetas) {
     if (fechaApertura && fechaApertura.isAfter(weekAgo)) {
       totals.abiertasSemana++;
     }
-    if (isCerrada && t.finReparacion) {
-      const fin = moment(t.finReparacion, [
-        "YYYY-MM-DD HH:mm",
-        "YYYY-MM-DD  HH:mm",
-        moment.ISO_8601,
-      ]);
-      if (fin.isValid() && fin.isAfter(weekAgo)) {
+    if (isCerrada) {
+      // New cards use the actual server-recorded closure time. Older cards do
+      // not have fechaCierre, so keep finReparacion as a legacy fallback.
+      const fechaCierre = t.fechaCierre
+        ? moment(t.fechaCierre)
+        : t.finReparacion
+        ? moment(t.finReparacion, [
+            "YYYY-MM-DD HH:mm",
+            "YYYY-MM-DD  HH:mm",
+            moment.ISO_8601,
+          ])
+        : null;
+      if (
+        fechaCierre &&
+        fechaCierre.isValid() &&
+        fechaCierre.isAfter(weekAgo)
+      ) {
         totals.cerradasSemana++;
       }
     }
